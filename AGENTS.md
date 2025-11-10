@@ -1,6 +1,7 @@
 # 🤖 AGENTS.md — TechHelper: Moduł Kalkulatorów i Bazy Narzędzi
 
 ## 🏗️ Architektura projektu
+
 **Technologie:**
 | Element | Technologia | Rola | Ocena |
 |----------|--------------|------|--------|
@@ -16,6 +17,7 @@
 ## 🎯 Scope MVP
 
 ### ✅ Co MUSI być w MVP:
+
 1. **Kalkulator prędkości i posuwu** - pełna funkcjonalność
 2. **Kalkulator kosztu obróbki** - pełna funkcjonalność (max 10 operacji)
 3. **Baza narzędzi** - wszystkie 3 typy (Głowice, Frezy, Wiertła)
@@ -28,6 +30,7 @@
    - Praca przez przeglądarkę
 
 ### 🚀 Do zrobienia PO MVP:
+
 - **Deployment na Railway.app** (po zakończeniu lokalnego MVP i testów)
 - Opcjonalnie: migracja na Azure (w przyszłości)
 
@@ -36,8 +39,10 @@
 ## 🧮 Moduły kalkulatorów
 
 ### 1. Kalkulator prędkości i posuwu
+
 **Cel:** automatyczne rozpoznanie typu obliczenia i wyłączenie niepotrzebnych pól.  
 **Funkcje:**
+
 - Użytkownik wprowadza dane: Vc, S, Fz, F, D, z (liczba ostrzy).
 - Jeśli wpisane jest Vc → pole S jest nieaktywne (i odwrotnie).
 - Jeśli wpisane jest Fz → pole F jest nieaktywne (i odwrotnie).
@@ -45,11 +50,12 @@
 - Logika obliczeń w osobnym pliku Pythona (np. `calculations/feed_speed.py`).
 - Przycisk „CLEAR" — reset wszystkich pól.
 
-**Wzory:**  
+**Wzory:**
+
 ```
-Vc = (π × D × n) / 1000  
-n = (1000 × Vc) / (π × D)  
-F = Fz × z × n  
+Vc = (π × D × n) / 1000
+n = (1000 × Vc) / (π × D)
+F = Fz × z × n
 Fz = F / (z × n)
 ```
 
@@ -58,14 +64,17 @@ Fz = F / (z × n)
 ---
 
 ### 2. Kalkulator kosztu obróbki
+
 **Cel:** obliczenie kosztu operacji na podstawie czasu i typu maszyny.
 
 **Parametry wejściowe (dla każdej z max. 10 operacji):**
+
 - Grupa maszyny (wybór z listy dropdown)
 - Czas przygotowawczo-zakończeniowy `Tpz` (min)
 - Czas jednostkowy `Tj` (min)
 
 **Obliczenia:**
+
 - Koszt Tpz = (Tpz / 60) × stawka
 - Koszt Tj = (Tj / 60) × stawka
 - Suma: Σ (Koszt Tpz + Koszt Tj) dla wszystkich operacji
@@ -85,6 +94,7 @@ Fz = F / (z × n)
 | 17 | Obróbka ślusarska | 90 |
 
 **UI:**
+
 - Możliwość dynamicznego dodawania kolejnych operacji (do 10)
 - Przycisk "Dodaj operację"
 - Przycisk "Usuń operację"
@@ -92,6 +102,7 @@ Fz = F / (z × n)
 - Przycisk "CLEAR" - reset wszystkich pól
 
 **Uwagi:**
+
 - Na razie stawki są stałe (zakodowane w aplikacji, bez edycji w UI).
 - W przyszłości można dodać możliwość ich modyfikacji.
 
@@ -102,6 +113,7 @@ Fz = F / (z × n)
 ## 🧰 Baza narzędzi
 
 ### 🎯 Wymagania ogólne dla wszystkich baz:
+
 - **CRUD:** Create, Read, Update, Delete przez UI
 - **Filtrowanie:** po średnicy i symbolu narzędzia (minimum)
 - **Wyszukiwanie:** live search (HTMX)
@@ -192,7 +204,6 @@ Fz = F / (z × n)
 
 ---
 
-
 ---
 
 ## 🔐 System użytkowników (POST-MVP)
@@ -200,21 +211,23 @@ Fz = F / (z × n)
 **Cel:**  
 Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
-**Założenia:**  
-- **Etap 1:** tylko 1 użytkownik (`admin`), dane logowania zapisane w `.env`.  
-- **Etap 2:** system wielu użytkowników z poziomami uprawnień:  
-  - `admin` – pełny dostęp (CRUD, kalkulatory)  
-  - `viewer` – tylko odczyt danych  
-- Uwierzytelnianie przez **FastAPI Security** (`OAuth2PasswordBearer` + JWT).  
-- Hasła szyfrowane przy użyciu `bcrypt`.  
-- Middleware sprawdzające token JWT przed każdą operacją modyfikującą dane.  
-- Endpointy:  
-  - `/auth/login` – zwraca token JWT  
-  - `/auth/logout` – unieważnia token (opcjonalnie)  
-  - `/auth/me` – zwraca dane zalogowanego użytkownika  
-- W UI: ukrycie przycisków „Dodaj / Edytuj / Usuń”, jeśli użytkownik ma rolę `viewer`.  
+**Założenia:**
+
+- **Etap 1:** tylko 1 użytkownik (`admin`), dane logowania zapisane w `.env`.
+- **Etap 2:** system wielu użytkowników z poziomami uprawnień:
+  - `admin` – pełny dostęp (CRUD, kalkulatory)
+  - `viewer` – tylko odczyt danych
+- Uwierzytelnianie przez **FastAPI Security** (`OAuth2PasswordBearer` + JWT).
+- Hasła szyfrowane przy użyciu `bcrypt`.
+- Middleware sprawdzające token JWT przed każdą operacją modyfikującą dane.
+- Endpointy:
+  - `/auth/login` – zwraca token JWT
+  - `/auth/logout` – unieważnia token (opcjonalnie)
+  - `/auth/me` – zwraca dane zalogowanego użytkownika
+- W UI: ukrycie przycisków „Dodaj / Edytuj / Usuń”, jeśli użytkownik ma rolę `viewer`.
 
 **Struktura (propozycja katalogów):**
+
 ```
 ├── routers/
 │   ├── auth.py               # logowanie, generowanie tokenów
@@ -228,10 +241,11 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 ```
 
 **Dodatkowe kroki w Roadmapie (POST-MVP):**
-- [ ] Dodać model `User` w SQLModel  
-- [ ] Zaimplementować JWT i middleware autoryzacji  
-- [ ] Przygotować prosty formularz logowania (HTML + HTMX)  
-- [ ] Testy uprawnień i poprawności logowania  
+
+- [ ] Dodać model `User` w SQLModel
+- [ ] Zaimplementować JWT i middleware autoryzacji
+- [ ] Przygotować prosty formularz logowania (HTML + HTMX)
+- [ ] Testy uprawnień i poprawności logowania
 - [ ] Aktualizacja dokumentacji
 
 ---
@@ -239,9 +253,11 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 ## 🌐 Deployment Strategy
 
 ### 🎯 POST-MVP: Railway.app
+
 **⚠️ UWAGA: Deployment dopiero PO zakończeniu i przetestowaniu lokalnego MVP!**
 
 **Dlaczego Railway:**
+
 - ✅ Prosty deployment (git push = auto deploy)
 - ✅ Darmowy tier: 500h/miesiąc + $5 creditu
 - ✅ Obsługuje SQLite z persistent volume
@@ -249,6 +265,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - ✅ Idealne dla FastAPI
 
 **Kroki (do wykonania PO MVP):**
+
 1. Przygotować `requirements.txt`
 2. Dodać `Procfile` lub `railway.toml`
 3. Stworzyć konto na Railway.app
@@ -257,12 +274,14 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 6. Deploy!
 
 **Koszt:**
+
 - Free tier na start
 - ~$5-10/miesiąc przy intensywnym użyciu
 
 **URL docelowy:** `https://techhelper-production.up.railway.app`
 
 ### 🔷 Opcjonalnie w przyszłości: Azure App Service
+
 - Migracja gdy aplikacja urośnie
 - Azure SQL Database zamiast SQLite
 - CI/CD przez GitHub Actions
@@ -273,6 +292,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 ## 🚀 Roadmap MVP
 
 ### Etap 1: Setup projektu (2-3h)
+
 - [x] Struktura katalogów
 - [ ] Konfiguracja FastAPI
 - [ ] Setup SQLite + SQLModel
@@ -281,6 +301,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] TailwindCSS CDN
 
 ### Etap 2: Kalkulator prędkości i posuwu (3-4h)
+
 - [ ] Model danych (jeśli potrzebny)
 - [ ] Logika obliczeń (`calculations/feed_speed.py`)
 - [ ] Template HTML + HTMX
@@ -289,6 +310,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Testy funkcjonalności
 
 ### Etap 3: Kalkulator kosztu obróbki (3-4h)
+
 - [ ] Model danych (operacje)
 - [ ] Logika obliczeń (`calculations/cost.py`)
 - [ ] Template HTML + HTMX (dynamiczne operacje)
@@ -297,6 +319,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Testy funkcjonalności
 
 ### Etap 4: Baza Głowic Frezarskich (4-5h)
+
 - [ ] Model SQLModel
 - [ ] CRUD endpoints
 - [ ] Template: lista + tabela
@@ -306,6 +329,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Testy CRUD
 
 ### Etap 5: Baza Frezów (3-4h)
+
 - [ ] Model SQLModel
 - [ ] CRUD endpoints
 - [ ] Templates (podobne do głowic)
@@ -313,6 +337,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Testy CRUD
 
 ### Etap 6: Baza Wierteł (3-4h)
+
 - [ ] Model SQLModel
 - [ ] CRUD endpoints
 - [ ] Templates
@@ -320,6 +345,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Testy CRUD
 
 ### Etap 7: Integracja i testy końcowe (2-3h)
+
 - [ ] Poprawki UI/UX
 - [ ] Testy wszystkich modułów
 - [ ] Sprawdzenie nawigacji
@@ -327,7 +353,9 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Bug fixing
 
 ### Etap 8: 🌐 Deployment (2-3h)
+
 **⚠️ Dopiero po zakończeniu Etapu 7!**
+
 - [ ] Przygotowanie `requirements.txt`
 - [ ] Konfiguracja Railway
 - [ ] Deploy na Railway.app
@@ -339,45 +367,56 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 ---
 
 ## 📂 Struktura katalogów
+
 ```
-techhelper_fastapi/
+TechHelper3/                           # ROOT projektu (tu git init)
 │
-├── main.py                      # Entry point
-├── database.py                  # SQLite connection
-├── requirements.txt             # Dependencies
-├── README.md                    # Dokumentacja
+├── README.md                          # Dokumentacja projektu
+├── requirements.txt                   # Zależności Python
+├── .gitignore                         # Pliki ignorowane przez git
+├── AGENTS.md                          # Ten dokument - specyfikacja techniczna
+├── .env                               # (opcjonalnie) Zmienne środowiskowe
 │
-├── templates/
-│   ├── base.html               # Base template z nawigacją
-│   ├── index.html              # Strona główna
+├── techhelper_fastapi/               # Główny folder aplikacji
+│   ├── main.py                       # Entry point FastAPI
+│   ├── database.py                   # SQLite connection
 │   │
-│   ├── calculators/
-│   │   ├── speed_feed.html     # Kalkulator prędkości
-│   │   └── cost.html           # Kalkulator kosztu
+│   ├── templates/                    # Szablony Jinja2
+│   │   ├── base.html                # Base template z nawigacją
+│   │   ├── index.html               # Strona główna
+│   │   │
+│   │   ├── calculators/
+│   │   │   ├── speed_feed.html      # Kalkulator prędkości
+│   │   │   └── cost.html            # Kalkulator kosztu
+│   │   │
+│   │   └── tools/
+│   │       ├── milling_heads_list.html      # Lista głowic
+│   │       ├── milling_heads_form.html      # Formularz głowic
+│   │       ├── milling_cutters_list.html    # Lista frezów
+│   │       ├── milling_cutters_form.html    # Formularz frezów
+│   │       ├── drills_list.html             # Lista wierteł
+│   │       └── drills_form.html             # Formularz wierteł
 │   │
-│   └── tools/
-│       ├── milling_heads_list.html      # Lista głowic
-│       ├── milling_heads_form.html      # Formularz głowic
-│       ├── milling_cutters_list.html    # Lista frezów
-│       ├── milling_cutters_form.html    # Formularz frezów
-│       ├── drills_list.html             # Lista wierteł
-│       └── drills_form.html             # Formularz wierteł
+│   ├── static/                       # Pliki statyczne
+│   │   └── styles.css               # (opcjonalnie) Custom CSS
+│   │
+│   ├── routers/                      # FastAPI routers
+│   │   ├── __init__.py
+│   │   ├── calculators.py           # Routing kalkulatorów
+│   │   └── tools.py                 # Routing bazy narzędzi
+│   │
+│   ├── calculations/                 # Logika obliczeń
+│   │   ├── __init__.py
+│   │   ├── feed_speed.py            # Logika kalkulatora prędkości
+│   │   └── cost.py                  # Logika kalkulatora kosztu
+│   │
+│   └── models/                       # SQLModel modele
+│       ├── __init__.py
+│       ├── milling_heads.py         # Model SQLModel głowic
+│       ├── milling_cutters.py       # Model SQLModel frezów
+│       └── drills.py                # Model SQLModel wierteł
 │
-├── static/
-│   └── styles.css              # (opcjonalnie) Custom CSS
-│
-├── routers/
-│   ├── calculators.py          # Routing kalkulatorów
-│   └── tools.py                # Routing bazy narzędzi
-│
-├── calculations/
-│   ├── feed_speed.py           # Logika kalkulatora prędkości
-│   └── cost.py                 # Logika kalkulatora kosztu
-│
-└── models/
-    ├── milling_heads.py        # Model SQLModel głowic
-    ├── milling_cutters.py      # Model SQLModel frezów
-    └── drills.py               # Model SQLModel wierteł
+└── techhelper.db                     # SQLite database (dodane do .gitignore)
 ```
 
 ---
@@ -385,6 +424,7 @@ techhelper_fastapi/
 ## ✅ Definition of Done (MVP)
 
 MVP jest ukończone gdy:
+
 1. ✅ Oba kalkulatory działają poprawnie (obliczenia + UI)
 2. ✅ Wszystkie 3 bazy narzędzi mają pełny CRUD przez UI
 3. ✅ Filtrowanie i wyszukiwanie działa
@@ -400,6 +440,7 @@ MVP jest ukończone gdy:
 ## 📝 Notatki techniczne
 
 ### SQLite Setup
+
 ```python
 # database.py
 from sqlmodel import SQLModel, create_engine, Session
@@ -416,18 +457,20 @@ def get_session():
 ```
 
 ### HTMX Przykład (filtrowanie)
+
 ```html
-<input 
-    type="text" 
-    name="search"
-    hx-get="/tools/milling-heads/filter"
-    hx-trigger="keyup changed delay:500ms"
-    hx-target="#results-table"
-    placeholder="Szukaj..."
+<input
+  type="text"
+  name="search"
+  hx-get="/tools/milling-heads/filter"
+  hx-trigger="keyup changed delay:500ms"
+  hx-target="#results-table"
+  placeholder="Szukaj..."
 />
 ```
 
 ### Stawki maszynowe (do zakodowania w `calculations/cost.py`)
+
 ```python
 MACHINE_RATES = {
     1: {"name": "Frezarka konwencjonalna do 600 mm", "rate": 110},
