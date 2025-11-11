@@ -294,7 +294,7 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 ### Etap 1: Setup projektu (2-3h)
 
 - [x] Struktura katalogów
-- [ ] Konfiguracja FastAPI
+- [x] Konfiguracja FastAPI
 - [ ] Setup SQLite + SQLModel
 - [ ] Podstawowe szablony Jinja2
 - [ ] Routing (strona główna + nawigacja)
