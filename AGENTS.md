@@ -295,10 +295,10 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
 - [x] Struktura katalogów
 - [x] Konfiguracja FastAPI
-- [ ] Setup SQLite + SQLModel
-- [ ] Podstawowe szablony Jinja2
-- [ ] Routing (strona główna + nawigacja)
-- [ ] TailwindCSS CDN
+- [x] Setup SQLite + SQLModel
+- [x] Podstawowe szablony Jinja2
+- [x] Routing (strona główna + nawigacja)
+- [x] TailwindCSS CDN
 
 ### Etap 2: Kalkulator prędkości i posuwu (3-4h)
 

@@ -1,12 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
   <head>
-    <meta charset="UTF-8" />
-    <title>TechHelper</title>
-    <!-- TODO: include TailwindCSS CDN and shared head content. -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}TechHelper{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
   </head>
-  <body>
-    <!-- TODO: add layout shell and navigation. -->
-    {% block content %}{% endblock %}
+  <body class="bg-slate-100 min-h-screen text-slate-900">
+    <header class="bg-white shadow-sm">
+      <nav
+        class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4"
+      >
+        <a
+          class="text-lg font-semibold text-blue-600"
+          href="{{ url_for('read_root') }}"
+        >
+          TechHelper
+        </a>
+        <ul class="flex gap-4 text-sm font-medium">
+          <li>
+            <a
+              class="text-slate-600 hover:text-blue-600"
+              href="{{ url_for('calculators_home') }}"
+            >
+              Kalkulatory
+            </a>
+          </li>
+          <li>
+            <a
+              class="text-slate-600 hover:text-blue-600"
+              href="{{ url_for('tools_home') }}"
+            >
+              Baza narzędzi
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main class="mx-auto max-w-5xl px-6 py-10">
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="bg-white">
+      <div class="mx-auto max-w-5xl px-6 py-4 text-xs text-slate-500">
+        TechHelper MVP — Etap 1 ukończony.
+      </div>
+    </footer>
   </body>
 </html>
