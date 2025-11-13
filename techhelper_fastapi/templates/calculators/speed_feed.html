@@ -1,5 +1,183 @@
-{% extends "base.html" %} {% block content %}
-<section>
-  <!-- TODO: build speed and feed calculator form. -->
+{% extends "base.html" %} {% block title %}Kalkulator prędkości i posuwu |
+TechHelper{% endblock %} {% block content %}
+<section class="space-y-6">
+  <header class="space-y-2">
+    <p class="text-sm font-semibold uppercase tracking-wide text-blue-600">
+      Kalkulator prędkości i posuwu
+    </p>
+    <h1 class="text-2xl font-semibold text-slate-900">
+      Oblicz Vc, n, F oraz Fz na podstawie wybranych parametrów
+    </h1>
+    <p class="text-sm text-slate-600">
+      Wprowadź średnicę narzędzia oraz liczbę ostrzy. Następnie podaj wartość
+      <strong>Vc</strong> lub <strong>n</strong> oraz <strong>Fz</strong> lub
+      <strong>F</strong>. Pola uzupełnione automatycznie zostaną wyłączone.
+    </p>
+  </header>
+
+  <form
+    id="speed-feed-form"
+    class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    method="post"
+    hx-post="{{ url_for('calculators_speed_feed_calculate') }}"
+    hx-target="#speed-feed-result"
+    hx-swap="innerHTML"
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Prędkość skrawania Vc (m/min)</span>
+        <input
+          id="cutting_speed"
+          name="cutting_speed"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 180"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Obroty wrzeciona n (obr/min)</span>
+        <input
+          id="spindle_speed"
+          name="spindle_speed"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="np. 2500"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Posuw na ząb Fz (mm/z)</span>
+        <input
+          id="feed_per_tooth"
+          name="feed_per_tooth"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="np. 0.12"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Posuw F (mm/min)</span>
+        <input
+          id="feed_rate"
+          name="feed_rate"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="np. 1200"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Średnica narzędzia D (mm)</span>
+        <input
+          id="diameter"
+          name="diameter"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 20"
+          required
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Liczba ostrzy z</span>
+        <input
+          id="teeth"
+          name="teeth"
+          type="number"
+          step="1"
+          min="1"
+          placeholder="np. 4"
+          required
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        type="submit"
+        class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        Oblicz
+      </button>
+      <button
+        type="reset"
+        class="rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        hx-get="{{ url_for('calculators_speed_feed_result_empty') }}"
+        hx-target="#speed-feed-result"
+        hx-swap="innerHTML"
+      >
+        Wyczyść
+      </button>
+    </div>
+  </form>
+
+  <div id="speed-feed-result">
+    {% include "calculators/partials/speed_feed_result.html" with context %}
+  </div>
 </section>
+
+<script>
+  (function () {
+    const form = document.getElementById("speed-feed-form");
+    if (!form) {
+      return;
+    }
+
+    const fieldPairs = [
+      ["cutting_speed", "spindle_speed"],
+      ["feed_per_tooth", "feed_rate"],
+    ];
+
+    const togglePair = () => {
+      fieldPairs.forEach(([primaryId, secondaryId]) => {
+        const primary = form.querySelector(`#${primaryId}`);
+        const secondary = form.querySelector(`#${secondaryId}`);
+        if (!primary || !secondary) {
+          return;
+        }
+        const primaryHasValue =
+          primary.value.trim() !== "" && Number(primary.value) > 0;
+        const secondaryHasValue =
+          secondary.value.trim() !== "" && Number(secondary.value) > 0;
+
+        if (primaryHasValue && !secondaryHasValue) {
+          secondary.setAttribute("disabled", "disabled");
+        } else if (secondaryHasValue && !primaryHasValue) {
+          primary.setAttribute("disabled", "disabled");
+        } else {
+          primary.removeAttribute("disabled");
+          secondary.removeAttribute("disabled");
+        }
+      });
+    };
+
+    form.addEventListener("input", togglePair);
+    form.addEventListener("reset", () => {
+      window.setTimeout(() => {
+        fieldPairs
+          .flat()
+          .forEach((id) =>
+            form.querySelector(`#${id}`)?.removeAttribute("disabled")
+          );
+        togglePair();
+      }, 0);
+    });
+
+    document.addEventListener("htmx:afterSwap", (event) => {
+      if (event.target && event.target.id === "speed-feed-result") {
+        togglePair();
+      }
+    });
+
+    togglePair();
+  })();
+</script>
 {% endblock %}

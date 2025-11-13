@@ -32,4 +32,4 @@ app.include_router(tools.router)
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request) -> HTMLResponse:
 	"""Render the landing page for the application."""
-	return templates.TemplateResponse("index.html", {"request": request})
+	return templates.TemplateResponse(request, "index.html")

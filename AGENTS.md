@@ -38,7 +38,7 @@
 
 ## 🧮 Moduły kalkulatorów
 
-### 1. Kalkulator prędkości i posuwu
+### 1. Kalkulator prędkości i posuwu - Frezowanie
 
 **Cel:** automatyczne rozpoznanie typu obliczenia i wyłączenie niepotrzebnych pól.  
 **Funkcje:**
@@ -63,7 +63,74 @@ Fz = F / (z × n)
 
 ---
 
-### 2. Kalkulator kosztu obróbki
+### 2. Kalkulator prędkości i posuwu - Frezowanie
+
+🎯 Zakres funkcjonalny
+
+Kalkulator powinien umożliwiać obliczenia parametrów skrawania dla wiercenia, z logiką odmienną od frezowania.
+
+📌 Parametry wejściowe
+
+Średnica wiertła D (mm)
+
+Prędkość skrawania Vc (m/min) lub obroty n (obr/min) — wzajemnie zależne
+
+Posuw na obrót fn (mm/obr) lub posuw F (mm/min) — wzajemnie zależne
+
+(opcjonalnie) Rodzaj wiertła – może wpływać na domyślne zakresy, ale na etapie MVP nie wymaga dodatkowej logiki
+
+🧮 Wzory obliczeń (wiercenie)
+Vc = (π × D × n) / 1000
+n = (1000 × Vc) / (π × D)
+F = fn × n
+fn = F / n
+🔧 Zasady działania
+
+Jeśli użytkownik wpisze Vc, pole n staje się nieaktywne (i odwrotnie).
+
+Jeśli użytkownik wpisze fn, pole F jest nieaktywne (i odwrotnie).
+
+Wyniki wyświetlane po pełnym odświeżeniu sekcji (HTMX).
+
+Wszystkie pola mają walidację (wartości dodatnie, liczby, D > 0).
+
+🖥️ UI i szablony
+
+Osobny template HTML: drilling_speed_feed.html
+
+Pola ułożone w takiej samej kolejności jak w kalkulatorze frezowania, ale z nazwami właściwymi dla wiercenia (fn zamiast fz).
+
+Przycisk CLEAR resetuje cały formularz.
+
+🛣️ Routing
+
+Endpoint GET: /calculators/drilling-speed-feed
+
+Endpoint POST (przeliczenia): /calculators/drilling-speed-feed/calculate
+
+🧠 Logika Pythona
+
+Plik: calculations/drilling_feed_speed.py
+
+Zawiera:
+
+funkcje do obliczeń n, Vc, F, fn
+
+funkcję wykrywającą, które pola podał użytkownik
+
+zwracanie błędów wejściowych (np. brak wystarczających danych)
+
+✔ Testy
+
+Przeliczenia Vc ↔ n
+
+Przeliczenia fn ↔ F
+
+Walidacja danych błędnych (np. D = 0, fn < 0)
+
+Test HTMX: poprawne odświeżanie tabeli wyników
+
+### 3. Kalkulator kosztu obróbki
 
 **Cel:** obliczenie kosztu operacji na podstawie czasu i typu maszyny.
 
@@ -300,12 +367,21 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [x] Routing (strona główna + nawigacja)
 - [x] TailwindCSS CDN
 
-### Etap 2: Kalkulator prędkości i posuwu (3-4h)
+### Etap 2: Kalkulator obrotów i posuwu - Frezowanie (3-4h)
 
-- [ ] Model danych (jeśli potrzebny)
-- [ ] Logika obliczeń (`calculations/feed_speed.py`)
-- [ ] Template HTML + HTMX
-- [ ] Routing i endpointy
+- [x] Model danych (jeśli potrzebny)
+- [x] Logika obliczeń (`calculations/feed_speed.py`)
+- [x] Template HTML + HTMX
+- [x] Routing i endpointy
+- [x] Walidacja inputów
+- [x] Testy funkcjonalności
+
+### Etap 2.5: Kalkulator obrotów i posuwu - Wiercenie (2-3h)
+
+- [ ] Model danych/specyfikacja różnic dla wiercenia
+- [ ] Logika obliczeń (`calculations/drilling_feed_speed.py`)
+- [ ] Template HTML + HTMX (wariant wiercenia)
+- [ ] Routing i endpointy (`/calculators/drilling-speed-feed`)
 - [ ] Walidacja inputów
 - [ ] Testy funkcjonalności
 

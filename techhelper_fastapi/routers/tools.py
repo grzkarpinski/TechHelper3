@@ -16,7 +16,4 @@ router = APIRouter(prefix="/tools", tags=["tools"])
 @router.get("/", response_class=HTMLResponse)
 async def tools_home(request: Request) -> HTMLResponse:
 	"""Render tools overview page."""
-	return templates.TemplateResponse(
-		"tools/index.html",
-		{"request": request},
-	)
+	return templates.TemplateResponse(request, "tools/index.html")

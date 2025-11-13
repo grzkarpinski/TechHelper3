@@ -4,15 +4,44 @@
   <header>
     <h1 class="text-2xl font-semibold text-slate-900">Kalkulatory</h1>
     <p class="mt-2 text-sm text-slate-600">
-      Moduły obliczeniowe zostaną uzupełnione w kolejnych etapach MVP.
+      Wybierz narzędzie obliczeniowe. Kolejne moduły pojawią się w następnych
+      etapach MVP.
     </p>
   </header>
   <div class="grid gap-4 md:grid-cols-2">
-    <div
-      class="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500"
+    <a
+      class="flex flex-col justify-between rounded-lg border border-blue-200 bg-white p-4 text-sm shadow-sm transition hover:border-blue-400 hover:shadow"
+      href="{{ url_for('calculators_speed_feed_form') }}"
     >
-      Kalkulator prędkości i posuwu — w przygotowaniu.
-    </div>
+      <div>
+        <h2 class="text-lg font-semibold text-slate-900">
+          Kalkulator prędkości i posuwu
+        </h2>
+        <p class="mt-1 text-sm text-slate-600">
+          Wyznacz Vc, n, F oraz Fz na podstawie wybranych parametrów. Wyniki
+          prezentowane są natychmiast na stronie.
+        </p>
+      </div>
+      <span
+        class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600"
+      >
+        Przejdź do kalkulatora
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
+      </span>
+    </a>
     <div
       class="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500"
     >
