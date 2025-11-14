@@ -378,12 +378,12 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
 ### Etap 2.5: Kalkulator obrotów i posuwu - Wiercenie (2-3h)
 
-- [ ] Model danych/specyfikacja różnic dla wiercenia
-- [ ] Logika obliczeń (`calculations/drilling_feed_speed.py`)
-- [ ] Template HTML + HTMX (wariant wiercenia)
-- [ ] Routing i endpointy (`/calculators/drilling-speed-feed`)
-- [ ] Walidacja inputów
-- [ ] Testy funkcjonalności
+- [x] Model danych/specyfikacja różnic dla wiercenia
+- [x] Logika obliczeń (`calculations/drilling_feed_speed.py`)
+- [x] Template HTML + HTMX (wariant wiercenia)
+- [x] Routing i endpointy (`/calculators/drilling-speed-feed`)
+- [x] Walidacja inputów
+- [x] Testy funkcjonalności
 
 ### Etap 3: Kalkulator kosztu obróbki (3-4h)
 

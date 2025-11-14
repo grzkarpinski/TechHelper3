@@ -73,5 +73,69 @@ class SpeedFeedCalculatorTests(unittest.TestCase):
         )
 
 
+class DrillingSpeedFeedCalculatorTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = TestClient(app)
+
+    def test_drilling_speed_feed_calculator_success(self):
+        response = self.client.post(
+            "/calculators/drilling-speed-feed",
+            data={
+                "cutting_speed": "120",
+                "spindle_speed": "",
+                "feed_per_rev": "0.15",
+                "feed_rate": "",
+                "diameter": "10",
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.text
+        self.assertIn("Wyniki obliczeń", body)
+        self.assertIn("120", body)  # Vc
+        self.assertIn("3820", body)  # n ≈ 3819.7 -> 3820 after rounding
+        self.assertIn("573", body)  # F ≈ 572.9 -> 573 after rounding
+        self.assertIn("0.150", body)  # fn formatting for values < 1
+
+    def test_drilling_speed_feed_calculator_validation_error(self):
+        response = self.client.post(
+            "/calculators/drilling-speed-feed",
+            data={
+                "cutting_speed": "",
+                "spindle_speed": "",
+                "feed_per_rev": "",
+                "feed_rate": "",
+                "diameter": "",
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.text
+        self.assertIn("Pole Średnica D jest wymagane.", body)
+
+    def test_drilling_missing_speed_inputs_error(self):
+        response = self.client.post(
+            "/calculators/drilling-speed-feed",
+            data={
+                "cutting_speed": "",
+                "spindle_speed": "",
+                "feed_per_rev": "0.2",
+                "feed_rate": "",
+                "diameter": "10",
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.text
+        self.assertIn(
+            "Podaj prędkość skrawania Vc lub obroty wrzeciona n.",
+            body,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

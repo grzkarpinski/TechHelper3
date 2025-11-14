@@ -1,0 +1,172 @@
+{% extends "base.html" %} {% block title %}Kalkulator prędkości i posuwu -
+wiercenie | TechHelper{% endblock %} {% block content %}
+<section class="space-y-6">
+  <header class="space-y-2">
+    <p class="text-sm font-semibold uppercase tracking-wide text-blue-600">
+      Kalkulator wiercenia
+    </p>
+    <h1 class="text-2xl font-semibold text-slate-900">
+      Oblicz Vc, n, F oraz fn dla operacji wiercenia
+    </h1>
+    <p class="text-sm text-slate-600">
+      Podaj średnicę wiertła oraz wybierz pary wartości: <strong>Vc</strong> lub
+      <strong>n</strong> oraz <strong>fn</strong> lub <strong>F</strong>.
+      Uzupełnione pola automatycznie zablokują swoje odpowiedniki, aby zapobiec
+      sprzecznym wartościom.
+    </p>
+  </header>
+
+  <form
+    id="drilling-speed-feed-form"
+    class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    method="post"
+    hx-post="{{ url_for('calculators_drilling_speed_feed_calculate') }}"
+    hx-target="#drilling-speed-feed-result"
+    hx-swap="innerHTML"
+  >
+    <div class="grid gap-4 sm:grid-cols-2">
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Prędkość skrawania Vc (m/min)</span>
+        <input
+          id="cutting_speed"
+          name="cutting_speed"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 120"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Obroty wrzeciona n (obr/min)</span>
+        <input
+          id="spindle_speed"
+          name="spindle_speed"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="np. 1800"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Posuw na obrót fn (mm/obr)</span>
+        <input
+          id="feed_per_rev"
+          name="feed_per_rev"
+          type="number"
+          step="0.001"
+          min="0"
+          placeholder="np. 0.15"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Posuw F (mm/min)</span>
+        <input
+          id="feed_rate"
+          name="feed_rate"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="np. 270"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700">
+        <span class="font-medium">Średnica wiertła D (mm)</span>
+        <input
+          id="diameter"
+          name="diameter"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 10"
+          required
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        type="submit"
+        class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        Oblicz
+      </button>
+      <button
+        type="reset"
+        class="rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        hx-get="{{ url_for('calculators_drilling_speed_feed_result_empty') }}"
+        hx-target="#drilling-speed-feed-result"
+        hx-swap="innerHTML"
+      >
+        Wyczyść
+      </button>
+    </div>
+  </form>
+
+  <div id="drilling-speed-feed-result">
+    {% include "calculators/partials/drilling_speed_feed_result.html" with
+    context %}
+  </div>
+</section>
+
+<script>
+  (function () {
+    const form = document.getElementById("drilling-speed-feed-form");
+    if (!form) {
+      return;
+    }
+
+    const fieldPairs = [
+      ["cutting_speed", "spindle_speed"],
+      ["feed_per_rev", "feed_rate"],
+    ];
+
+    const togglePair = () => {
+      fieldPairs.forEach(([primaryId, secondaryId]) => {
+        const primary = form.querySelector(`#${primaryId}`);
+        const secondary = form.querySelector(`#${secondaryId}`);
+        if (!primary || !secondary) {
+          return;
+        }
+        const primaryHasValue =
+          primary.value.trim() !== "" && Number(primary.value) > 0;
+        const secondaryHasValue =
+          secondary.value.trim() !== "" && Number(secondary.value) > 0;
+
+        if (primaryHasValue && !secondaryHasValue) {
+          secondary.setAttribute("disabled", "disabled");
+        } else if (secondaryHasValue && !primaryHasValue) {
+          primary.setAttribute("disabled", "disabled");
+        } else {
+          primary.removeAttribute("disabled");
+          secondary.removeAttribute("disabled");
+        }
+      });
+    };
+
+    form.addEventListener("input", togglePair);
+    form.addEventListener("reset", () => {
+      window.setTimeout(() => {
+        fieldPairs
+          .flat()
+          .forEach((id) =>
+            form.querySelector(`#${id}`)?.removeAttribute("disabled")
+          );
+        togglePair();
+      }, 0);
+    });
+
+    document.addEventListener("htmx:afterSwap", (event) => {
+      if (event.target && event.target.id === "drilling-speed-feed-result") {
+        togglePair();
+      }
+    });
+
+    togglePair();
+  })();
+</script>
+{% endblock %}
