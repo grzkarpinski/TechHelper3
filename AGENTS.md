@@ -387,12 +387,12 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
 ### Etap 3: Kalkulator kosztu obróbki (3-4h)
 
-- [ ] Model danych (operacje)
-- [ ] Logika obliczeń (`calculations/cost.py`)
-- [ ] Template HTML + HTMX (dynamiczne operacje)
-- [ ] Routing i endpointy
-- [ ] Walidacja inputów
-- [ ] Testy funkcjonalności
+- [x] Model danych (operacje)
+- [x] Logika obliczeń (`calculations/cost.py`)
+- [x] Template HTML + HTMX (dynamiczne operacje)
+- [x] Routing i endpointy
+- [x] Walidacja inputów
+- [x] Testy funkcjonalności
 
 ### Etap 4: Baza Głowic Frezarskich (4-5h)
 

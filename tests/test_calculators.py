@@ -137,5 +137,60 @@ class DrillingSpeedFeedCalculatorTests(unittest.TestCase):
         )
 
 
+class MachiningCostCalculatorTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = TestClient(app)
+
+    def test_cost_calculator_success(self):
+        response = self.client.post(
+            "/calculators/cost",
+            data={
+                "machine_group": ["1", "6"],
+                "tpz": ["30", "45"],
+                "tj": ["15", "20"],
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.text
+        self.assertIn("Podsumowanie kosztów", body)
+        self.assertIn("55.00", body)  # koszt Tpz dla operacji 1
+        self.assertIn("27.50", body)  # koszt Tj dla operacji 1
+        self.assertIn("151.67", body)  # suma dla operacji 2 po zaokrągleniu
+        self.assertIn("234.17", body)  # łączny koszt
+
+    def test_cost_calculator_requires_operation(self):
+        response = self.client.post(
+            "/calculators/cost",
+            data={
+                "machine_group": [""],
+                "tpz": [""],
+                "tj": [""],
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.text
+        self.assertIn("Dodaj przynajmniej jedną operację.", body)
+
+    def test_cost_calculator_rejects_negative_time(self):
+        response = self.client.post(
+            "/calculators/cost",
+            data={
+                "machine_group": ["1"],
+                "tpz": ["-5"],
+                "tj": ["10"],
+            },
+            headers={"HX-Request": "true"},
+        )
+
+        self.assertEqual(response.status_code, 400)
+        body = response.text
+        self.assertIn("nie może być ujemne", body)
+
+
 if __name__ == "__main__":
     unittest.main()

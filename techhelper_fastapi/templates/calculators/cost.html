@@ -1,5 +1,218 @@
-{% extends "base.html" %} {% block content %}
-<section>
-  <!-- TODO: build machining cost calculator UI. -->
+{% extends "base.html" %} {% block title %}Kalkulator kosztu obróbki |
+TechHelper{% endblock %} {% block content %}
+<section class="space-y-6">
+  <header class="space-y-2">
+    <p class="text-sm font-semibold uppercase tracking-wide text-blue-600">
+      Kalkulator kosztu obróbki
+    </p>
+    <h1 class="text-2xl font-semibold text-slate-900">
+      Oszacuj koszt operacji na podstawie czasów Tpz, Tj i stawek maszynowych
+    </h1>
+    <p class="text-sm text-slate-600">
+      Dodaj maksymalnie {{ max_operations }} operacji. Wybierz grupę maszyny i
+      wprowadź czasy w minutach dla etapów przygotowawczych
+      (<strong>Tpz</strong>) oraz jednostkowych (<strong>Tj</strong>). Puste
+      pola są traktowane jako wartość 0.
+    </p>
+  </header>
+
+  <form
+    id="cost-form"
+    class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    method="post"
+    hx-post="{{ url_for('calculators_cost_calculate') }}"
+    hx-target="#cost-result"
+    hx-swap="innerHTML"
+  >
+    <div
+      id="operation-rows"
+      class="space-y-4"
+      data-max="{{ max_operations }}"
+    ></div>
+    <noscript>
+      <p
+        class="rounded border border-amber-200 bg-amber-50 p-3 text-sm text-amber-700"
+      >
+        Aby skorzystać z kalkulatora, włącz obsługę JavaScript w przeglądarce.
+      </p>
+    </noscript>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        type="button"
+        id="add-operation"
+        class="rounded border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      >
+        Dodaj operację
+      </button>
+      <button
+        type="button"
+        id="remove-operation"
+        class="rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+      >
+        Usuń operację
+      </button>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <button
+        type="submit"
+        class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
+        Oblicz koszt
+      </button>
+      <button
+        type="reset"
+        class="rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        hx-get="{{ url_for('calculators_cost_result_empty') }}"
+        hx-target="#cost-result"
+        hx-swap="innerHTML"
+      >
+        Wyczyść
+      </button>
+    </div>
+  </form>
+
+  <div id="cost-result">
+    {% include "calculators/partials/cost_result.html" with context %}
+  </div>
 </section>
+
+<template id="operation-row-template">
+  <div
+    class="space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4"
+    data-operation-row
+  >
+    <div class="text-sm font-semibold text-slate-700" data-operation-title>
+      Operacja
+    </div>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <label
+        class="space-y-1 text-sm text-slate-700"
+        for="machine_group-__INDEX__"
+      >
+        <span class="font-medium">Grupa maszyny</span>
+        <select
+          id="machine_group-__INDEX__"
+          name="machine_group"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        >
+          <option value="">Wybierz grupę</option>
+          {% for rate in machine_rates %}
+          <option value="{{ rate.group }}">
+            {{ rate.group }} — {{ rate.name }} ({{ rate.rate | round(0) | int }}
+            PLN/h)
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label class="space-y-1 text-sm text-slate-700" for="tpz-__INDEX__">
+        <span class="font-medium"
+          >Czas przygotowawczo-zakończeniowy Tpz (min)</span
+        >
+        <input
+          id="tpz-__INDEX__"
+          name="tpz"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 30"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+      <label class="space-y-1 text-sm text-slate-700" for="tj-__INDEX__">
+        <span class="font-medium">Czas jednostkowy Tj (min)</span>
+        <input
+          id="tj-__INDEX__"
+          name="tj"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="np. 12"
+          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+        />
+      </label>
+    </div>
+  </div>
+</template>
+
+<script>
+  (function () {
+    const form = document.getElementById("cost-form");
+    if (!form) {
+      return;
+    }
+
+    const rowsContainer = document.getElementById("operation-rows");
+    const addBtn = document.getElementById("add-operation");
+    const removeBtn = document.getElementById("remove-operation");
+    const template = document.getElementById("operation-row-template");
+    const maxOperations = Number(rowsContainer?.dataset?.max) || {{ max_operations }};
+
+    const renderRow = (index) => {
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = template.innerHTML.replace(/__INDEX__/g, index);
+      return wrapper.firstElementChild;
+    };
+
+    const updateRowTitles = () => {
+      Array.from(rowsContainer.children).forEach((row, idx) => {
+        const title = row.querySelector("[data-operation-title]");
+        if (title) {
+          title.textContent = `Operacja ${idx + 1}`;
+        }
+      });
+    };
+
+    const refreshControls = () => {
+      if (!addBtn || !removeBtn) {
+        return;
+      }
+      const current = rowsContainer.children.length;
+      removeBtn.disabled = current <= 1;
+      addBtn.disabled = current >= maxOperations;
+      updateRowTitles();
+    };
+
+    const addRow = () => {
+      if (rowsContainer.children.length >= maxOperations) {
+        return;
+      }
+      const row = renderRow(rowsContainer.children.length);
+      rowsContainer.appendChild(row);
+      refreshControls();
+    };
+
+    const removeRow = () => {
+      if (rowsContainer.children.length <= 1) {
+        return;
+      }
+      rowsContainer.removeChild(rowsContainer.lastElementChild);
+      refreshControls();
+    };
+
+    addBtn?.addEventListener("click", addRow);
+    removeBtn?.addEventListener("click", removeRow);
+
+    form.addEventListener("reset", () => {
+      window.setTimeout(() => {
+        while (rowsContainer.children.length > 1) {
+          rowsContainer.removeChild(rowsContainer.lastElementChild);
+        }
+        const firstRow = rowsContainer.firstElementChild;
+        if (firstRow) {
+          firstRow.querySelectorAll("input, select").forEach((field) => {
+            field.value = "";
+          });
+        } else {
+          addRow();
+        }
+        refreshControls();
+      }, 0);
+    });
+
+    addRow();
+    refreshControls();
+  })();
+</script>
 {% endblock %}

@@ -7,6 +7,13 @@ from fastapi import APIRouter, Form, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from ..calculations.cost import (
+	MAX_OPERATIONS,
+	MACHINE_RATES,
+	MachiningCostCalculationError,
+	OperationInput,
+	calculate_cost_summary,
+)
 from ..calculations.feed_speed import (
 	SpeedFeedCalculationError,
 	calculate_speed_feed,
@@ -78,6 +85,24 @@ def _render_drilling_speed_feed_partial(
 	)
 
 
+def _render_cost_partial(
+	request: Request,
+	*,
+	result: Any | None = None,
+	errors: list[str] | None = None,
+	status_code: int = status.HTTP_200_OK,
+) -> HTMLResponse:
+	return templates.TemplateResponse(
+		request,
+		"calculators/partials/cost_result.html",
+		{
+			"result": result,
+			"errors": errors,
+		},
+		status_code=status_code,
+	)
+
+
 @router.get(
 	"/speed-feed/result",
 	response_class=HTMLResponse,
@@ -111,6 +136,37 @@ async def calculators_drilling_speed_feed_result_empty(
 ) -> HTMLResponse:
 	"""Return an empty result fragment for the drilling calculator."""
 	return _render_drilling_speed_feed_partial(request)
+
+
+@router.get(
+	"/cost",
+	response_class=HTMLResponse,
+	name="calculators_cost_form",
+)
+async def calculators_cost_form(request: Request) -> HTMLResponse:
+	"""Render the machining cost calculator page."""
+	machine_rates = [
+		{"group": group, "name": data["name"], "rate": data["rate"]}
+		for group, data in MACHINE_RATES.items()
+	]
+	return templates.TemplateResponse(
+		request,
+		"calculators/cost.html",
+		{
+			"machine_rates": machine_rates,
+			"max_operations": MAX_OPERATIONS,
+		},
+	)
+
+
+@router.get(
+	"/cost/result",
+	response_class=HTMLResponse,
+	name="calculators_cost_result_empty",
+)
+async def calculators_cost_result_empty(request: Request) -> HTMLResponse:
+	"""Return an empty result fragment for the cost calculator."""
+	return _render_cost_partial(request)
 
 
 @router.post(
@@ -289,4 +345,108 @@ async def calculators_speed_feed_calculate(
 	return _render_speed_feed_partial(
 		request,
 		result=result_payload,
+	)
+
+
+@router.post(
+	"/cost",
+	response_class=HTMLResponse,
+	name="calculators_cost_calculate",
+)
+async def calculators_cost_calculate(request: Request) -> HTMLResponse:
+	"""Process machining cost form submission and return the result fragment."""
+
+	form_data = await request.form()
+	machine_groups = form_data.getlist("machine_group")
+	tpz_values = form_data.getlist("tpz")
+	tj_values = form_data.getlist("tj")
+
+	errors: list[str] = []
+	operations: list[OperationInput] = []
+	row_count = max(len(machine_groups), len(tpz_values), len(tj_values))
+
+	def _parse_machine_group(value: str, row_number: int) -> int | None:
+		cleaned = value.strip()
+		if not cleaned:
+			errors.append(f"Wybierz grupę maszyny dla operacji {row_number}.")
+			return None
+		try:
+			number = int(cleaned)
+		except ValueError:
+			errors.append(
+				f"Pole grupa maszyny w operacji {row_number} musi być liczbą całkowitą."
+			)
+			return None
+		return number
+
+	def _parse_minutes(value: str, field_label: str, row_number: int) -> float | None:
+		cleaned = value.strip()
+		if not cleaned:
+			return 0.0
+		normalized = cleaned.replace(",", ".")
+		try:
+			numeric = float(normalized)
+		except ValueError:
+			errors.append(
+				f"Pole {field_label} w operacji {row_number} musi być liczbą."
+			)
+			return None
+		if numeric < 0:
+			errors.append(
+				f"Pole {field_label} w operacji {row_number} nie może być ujemne."
+			)
+			return None
+		return numeric
+
+	for index in range(row_count):
+		group_raw = machine_groups[index] if index < len(machine_groups) else ""
+		tpz_raw = tpz_values[index] if index < len(tpz_values) else ""
+		tj_raw = tj_values[index] if index < len(tj_values) else ""
+
+		if not group_raw and not tpz_raw and not tj_raw:
+			continue
+
+		row_number = index + 1
+		machine_group = _parse_machine_group(group_raw, row_number)
+		tpz_minutes = _parse_minutes(tpz_raw, "Tpz", row_number)
+		tj_minutes = _parse_minutes(tj_raw, "Tj", row_number)
+
+		if machine_group is None or tpz_minutes is None or tj_minutes is None:
+			continue
+
+		operations.append(
+			OperationInput(
+				machine_group=machine_group,
+				tpz_minutes=tpz_minutes,
+				tj_minutes=tj_minutes,
+			)
+		)
+
+	if len(operations) > MAX_OPERATIONS:
+		errors.append(
+			f"Można obliczyć maksymalnie {MAX_OPERATIONS} operacji jednocześnie."
+		)
+
+	if not operations and not errors:
+		errors.append("Dodaj przynajmniej jedną operację.")
+
+	if errors:
+		return _render_cost_partial(
+			request,
+			errors=errors,
+			status_code=status.HTTP_400_BAD_REQUEST,
+		)
+
+	try:
+		summary = calculate_cost_summary(operations=operations)
+	except MachiningCostCalculationError as exc:
+		return _render_cost_partial(
+			request,
+			errors=[str(exc)],
+			status_code=status.HTTP_400_BAD_REQUEST,
+		)
+
+	return _render_cost_partial(
+		request,
+		result=summary,
 	)
