@@ -1,54 +1,45 @@
 {% macro format_minutes(value) -%} {{ '%.2f' % value }} {%- endmacro %} {% macro
 format_currency(value) -%} {{ '%.2f' % value }} {%- endmacro %} {% if errors %}
-<div
-  class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
->
-  <ul class="list-disc space-y-1 pl-4">
+<div class="app-alert app-alert--error">
+  <ul>
     {% for message in errors %}
     <li>{{ message }}</li>
     {% endfor %}
   </ul>
 </div>
 {% elif result %}
-<div class="space-y-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-  <h3 class="text-sm font-semibold text-emerald-900">Podsumowanie kosztów</h3>
-  <div class="overflow-x-auto rounded border border-emerald-200 bg-white">
-    <table
-      class="min-w-full divide-y divide-emerald-100 text-sm text-emerald-900"
+<div class="app-card space-y-5">
+  <div class="flex items-center justify-between">
+    <h3 class="text-sm font-semibold text-slate-800">Podsumowanie kosztów</h3>
+    <span class="app-pill"
+      >Łącznie: {{ format_currency(result.total_cost) }} PLN</span
     >
-      <thead
-        class="bg-emerald-100 text-xs uppercase tracking-wide text-emerald-700"
-      >
+  </div>
+  <div class="overflow-x-auto">
+    <table class="app-table text-sm">
+      <thead>
         <tr>
-          <th class="px-3 py-2 text-left">Operacja</th>
-          <th class="px-3 py-2 text-left">Grupa maszyny</th>
-          <th class="px-3 py-2 text-right">Tpz (min)</th>
-          <th class="px-3 py-2 text-right">Koszt Tpz (PLN)</th>
-          <th class="px-3 py-2 text-right">Tj (min)</th>
-          <th class="px-3 py-2 text-right">Koszt Tj (PLN)</th>
-          <th class="px-3 py-2 text-right">Suma (PLN)</th>
+          <th>Operacja</th>
+          <th>Grupa maszyny</th>
+          <th class="text-right">Tpz (min)</th>
+          <th class="text-right">Koszt Tpz (PLN)</th>
+          <th class="text-right">Tj (min)</th>
+          <th class="text-right">Koszt Tj (PLN)</th>
+          <th class="text-right">Suma (PLN)</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-emerald-100">
+      <tbody>
         {% for operation in result.operations %}
         <tr>
-          <td class="px-3 py-2 font-medium">Operacja {{ loop.index }}</td>
-          <td class="px-3 py-2">
-            {{ operation.machine_group }} — {{ operation.machine_name }}
-          </td>
-          <td class="px-3 py-2 text-right">
+          <td class="font-medium">Operacja {{ loop.index }}</td>
+          <td>{{ operation.machine_group }} — {{ operation.machine_name }}</td>
+          <td class="text-right">
             {{ format_minutes(operation.tpz_minutes) }}
           </td>
-          <td class="px-3 py-2 text-right">
-            {{ format_currency(operation.tpz_cost) }}
-          </td>
-          <td class="px-3 py-2 text-right">
-            {{ format_minutes(operation.tj_minutes) }}
-          </td>
-          <td class="px-3 py-2 text-right">
-            {{ format_currency(operation.tj_cost) }}
-          </td>
-          <td class="px-3 py-2 text-right font-semibold">
+          <td class="text-right">{{ format_currency(operation.tpz_cost) }}</td>
+          <td class="text-right">{{ format_minutes(operation.tj_minutes) }}</td>
+          <td class="text-right">{{ format_currency(operation.tj_cost) }}</td>
+          <td class="text-right font-semibold">
             {{ format_currency(operation.total_cost) }}
           </td>
         </tr>
@@ -56,19 +47,9 @@ format_currency(value) -%} {{ '%.2f' % value }} {%- endmacro %} {% if errors %}
       </tbody>
     </table>
   </div>
-  <div
-    class="flex items-center justify-between rounded border border-emerald-200 bg-white px-4 py-3 text-sm text-emerald-900"
-  >
-    <span class="font-medium">Łączny koszt operacji</span>
-    <span class="text-lg font-semibold">
-      {{ format_currency(result.total_cost) }} PLN
-    </span>
-  </div>
 </div>
 {% else %}
-<div
-  class="rounded-lg border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500"
->
-  Wyniki pojawią się tutaj po wysłaniu formularza.
+<div class="app-alert app-alert--placeholder">
+  Wyniki pojawią się po wprowadzeniu danych wejściowych.
 </div>
 {% endif %}

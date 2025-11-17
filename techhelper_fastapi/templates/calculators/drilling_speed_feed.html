@@ -1,32 +1,31 @@
 {% extends "base.html" %} {% block title %}Kalkulator prędkości i posuwu -
 wiercenie | TechHelper{% endblock %} {% block content %}
-<section class="space-y-6">
-  <header class="space-y-2">
-    <p class="text-sm font-semibold uppercase tracking-wide text-blue-600">
-      Kalkulator wiercenia
-    </p>
-    <h1 class="text-2xl font-semibold text-slate-900">
-      Oblicz Vc, n, F oraz fn dla operacji wiercenia
+<section class="app-section">
+  <header>
+    <span class="app-section-eyebrow">Wiercenie</span>
+    <h1 class="app-section-title">
+      Parametry skrawania dla operacji wiercenia
     </h1>
-    <p class="text-sm text-slate-600">
-      Podaj średnicę wiertła oraz wybierz pary wartości: <strong>Vc</strong> lub
-      <strong>n</strong> oraz <strong>fn</strong> lub <strong>F</strong>.
-      Uzupełnione pola automatycznie zablokują swoje odpowiedniki, aby zapobiec
-      sprzecznym wartościom.
+    <p class="app-section-lede">
+      Wskaż średnicę wiertła oraz jedną z par: <strong>Vc</strong>/<strong
+        >n</strong
+      >
+      i <strong>fn</strong>/<strong>F</strong>. Formularz blokuje powiązane
+      pola, aby zachować spójność obliczeń.
     </p>
   </header>
 
   <form
     id="drilling-speed-feed-form"
-    class="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+    class="app-card space-y-8"
     method="post"
     hx-post="{{ url_for('calculators_drilling_speed_feed_calculate') }}"
     hx-target="#drilling-speed-feed-result"
     hx-swap="innerHTML"
   >
-    <div class="grid gap-4 sm:grid-cols-2">
-      <label class="space-y-1 text-sm text-slate-700">
-        <span class="font-medium">Prędkość skrawania Vc (m/min)</span>
+    <div class="app-form-grid">
+      <label class="app-field" for="cutting_speed">
+        <span>Prędkość skrawania Vc (m/min)</span>
         <input
           id="cutting_speed"
           name="cutting_speed"
@@ -34,11 +33,11 @@ wiercenie | TechHelper{% endblock %} {% block content %}
           step="0.01"
           min="0"
           placeholder="np. 120"
-          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          class="app-input"
         />
       </label>
-      <label class="space-y-1 text-sm text-slate-700">
-        <span class="font-medium">Obroty wrzeciona n (obr/min)</span>
+      <label class="app-field" for="spindle_speed">
+        <span>Obroty wrzeciona n (obr/min)</span>
         <input
           id="spindle_speed"
           name="spindle_speed"
@@ -46,11 +45,11 @@ wiercenie | TechHelper{% endblock %} {% block content %}
           step="1"
           min="0"
           placeholder="np. 1800"
-          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          class="app-input"
         />
       </label>
-      <label class="space-y-1 text-sm text-slate-700">
-        <span class="font-medium">Posuw na obrót fn (mm/obr)</span>
+      <label class="app-field" for="feed_per_rev">
+        <span>Posuw na obrót fn (mm/obr)</span>
         <input
           id="feed_per_rev"
           name="feed_per_rev"
@@ -58,11 +57,11 @@ wiercenie | TechHelper{% endblock %} {% block content %}
           step="0.001"
           min="0"
           placeholder="np. 0.15"
-          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          class="app-input"
         />
       </label>
-      <label class="space-y-1 text-sm text-slate-700">
-        <span class="font-medium">Posuw F (mm/min)</span>
+      <label class="app-field" for="feed_rate">
+        <span>Posuw F (mm/min)</span>
         <input
           id="feed_rate"
           name="feed_rate"
@@ -70,11 +69,11 @@ wiercenie | TechHelper{% endblock %} {% block content %}
           step="1"
           min="0"
           placeholder="np. 270"
-          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          class="app-input"
         />
       </label>
-      <label class="space-y-1 text-sm text-slate-700">
-        <span class="font-medium">Średnica wiertła D (mm)</span>
+      <label class="app-field" for="diameter">
+        <span>Średnica wiertła D (mm)</span>
         <input
           id="diameter"
           name="diameter"
@@ -83,31 +82,28 @@ wiercenie | TechHelper{% endblock %} {% block content %}
           min="0"
           placeholder="np. 10"
           required
-          class="w-full rounded border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+          class="app-input"
         />
       </label>
     </div>
 
-    <div class="flex flex-wrap gap-3">
-      <button
-        type="submit"
-        class="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-      >
-        Oblicz
+    <div class="app-actions">
+      <button type="submit" class="app-button app-button--primary">
+        Oblicz parametry
       </button>
       <button
         type="reset"
-        class="rounded border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-slate-400 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-300"
+        class="app-button app-button--ghost"
         hx-get="{{ url_for('calculators_drilling_speed_feed_result_empty') }}"
         hx-target="#drilling-speed-feed-result"
         hx-swap="innerHTML"
       >
-        Wyczyść
+        Wyczyść formularz
       </button>
     </div>
   </form>
 
-  <div id="drilling-speed-feed-result">
+  <div id="drilling-speed-feed-result" class="app-section">
     {% include "calculators/partials/drilling_speed_feed_result.html" with
     context %}
   </div>

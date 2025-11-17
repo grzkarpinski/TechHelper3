@@ -1,33 +1,34 @@
 {% extends "base.html" %} {% block title %}Kalkulatory | TechHelper{% endblock
 %} {% block content %}
-<section class="space-y-6">
+<section class="app-section">
   <header>
-    <h1 class="text-2xl font-semibold text-slate-900">Kalkulatory</h1>
-    <p class="mt-2 text-sm text-slate-600">
-      Wybierz narzędzie obliczeniowe. Kolejne moduły pojawią się w następnych
-      etapach MVP.
+    <span class="app-section-eyebrow">Moduł obliczeń</span>
+    <h1 class="app-section-title">Kalkulatory dla frezowania i wiercenia</h1>
+    <p class="app-section-lede">
+      Dobierz parametry skrawania lub oszacuj koszt operacji obróbczych.
+      Wszystkie kalkulatory reagują natychmiast dzięki HTMX, a wyniki są
+      prezentowane bez przeładowywania strony.
     </p>
   </header>
-  <div class="grid gap-4 md:grid-cols-2">
+  <div class="grid gap-5 md:grid-cols-3">
     <a
-      class="group flex flex-col justify-between rounded-lg border border-blue-200 bg-white p-4 text-sm shadow-sm transition hover:border-blue-400 hover:shadow"
+      class="app-card group flex flex-col justify-between gap-6 transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_speed_feed_form') }}"
     >
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">
+      <div class="space-y-3">
+        <span class="app-pill">Frezowanie</span>
+        <h2 class="text-xl font-semibold text-slate-900">
           Kalkulator prędkości i posuwu
         </h2>
-        <p class="mt-1 text-sm text-slate-600">
-          Wyznacz Vc, n, F oraz Fz na podstawie wybranych parametrów. Wyniki
-          prezentowane są natychmiast na stronie.
+        <p class="text-sm text-slate-600">
+          Wyznacz Vc, n, F oraz Fz na podstawie znanych parametrów narzędzia i
+          obrabiarki. Logika automatycznie blokuje powiązane pola wejściowe.
         </p>
       </div>
-      <span
-        class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600"
-      >
+      <span class="app-actions justify-between text-sm text-blue-600">
         Przejdź do kalkulatora
         <span
-          class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +40,7 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.5"
+              stroke-width="1.6"
               d="M9 5l7 7-7 7"
             />
           </svg>
@@ -47,24 +48,23 @@
       </span>
     </a>
     <a
-      class="group flex flex-col justify-between rounded-lg border border-blue-200 bg-white p-4 text-sm shadow-sm transition hover:border-blue-400 hover:shadow"
+      class="app-card group flex flex-col justify-between gap-6 transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_drilling_speed_feed_form') }}"
     >
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">
-          Kalkulator wiercenia
+      <div class="space-y-3">
+        <span class="app-pill">Wiercenie</span>
+        <h2 class="text-xl font-semibold text-slate-900">
+          Kalkulator parametrów wiercenia
         </h2>
-        <p class="mt-1 text-sm text-slate-600">
-          Oblicz parametry skrawania dla wiercenia: Vc, n, F oraz fn z
-          automatycznym blokowaniem powiązanych pól wejściowych.
+        <p class="text-sm text-slate-600">
+          Oblicz Vc, n, F oraz fn dla wierteł o różnych średnicach z
+          automatyczną walidacją zakresów i blokowaniem danych zależnych.
         </p>
       </div>
-      <span
-        class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600"
-      >
+      <span class="app-actions justify-between text-sm text-blue-600">
         Przejdź do kalkulatora
         <span
-          class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -76,7 +76,7 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.5"
+              stroke-width="1.6"
               d="M9 5l7 7-7 7"
             />
           </svg>
@@ -84,24 +84,24 @@
       </span>
     </a>
     <a
-      class="group flex flex-col justify-between rounded-lg border border-blue-200 bg-white p-4 text-sm shadow-sm transition hover:border-blue-400 hover:shadow"
+      class="app-card group flex flex-col justify-between gap-6 transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_cost_form') }}"
     >
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900">
-          Kalkulator kosztu obróbki
+      <div class="space-y-3">
+        <span class="app-pill">Koszt obróbki</span>
+        <h2 class="text-xl font-semibold text-slate-900">
+          Kalkulator czasu i stawki
         </h2>
-        <p class="mt-1 text-sm text-slate-600">
-          Oblicz koszt operacji uwzględniając czasy Tpz, Tj oraz stawki
-          godzinowe dla wybranych grup maszyn.
+        <p class="text-sm text-slate-600">
+          Szacuj koszt operacji dla maksymalnie dziesięciu zabiegów,
+          wykorzystując stawki godzinowe przypisane do grup maszyn oraz czasy
+          Tpz i Tj.
         </p>
       </div>
-      <span
-        class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-600"
-      >
+      <span class="app-actions justify-between text-sm text-blue-600">
         Przejdź do kalkulatora
         <span
-          class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
-              stroke-width="1.5"
+              stroke-width="1.6"
               d="M9 5l7 7-7 7"
             />
           </svg>

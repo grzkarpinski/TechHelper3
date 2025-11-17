@@ -1,5 +1,16 @@
-{% extends "base.html" %} {% block content %}
-<section>
-  <!-- TODO: render drill form partial with validations. -->
+{% extends "base.html" %} {% block title %}Wiertło — edycja | TechHelper{%
+endblock %} {% block content %}
+<section class="app-section">
+  <header>
+    <span class="app-section-eyebrow">Wiertła</span>
+    <h1 class="app-section-title">Formularz dodawania i edycji</h1>
+    <p class="app-section-lede">
+      Tworzymy formularz pozwalający rejestrować typ wiertła, zakres posuwów fn
+      oraz rekomendowane prędkości skrawania.
+    </p>
+  </header>
+  <div class="app-alert app-alert--placeholder">
+    Formularz zostanie aktywowany wraz z implementacją CRUD.
+  </div>
 </section>
 {% endblock %}

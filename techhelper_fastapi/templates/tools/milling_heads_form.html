@@ -1,5 +1,16 @@
-{% extends "base.html" %} {% block content %}
-<section>
-  <!-- TODO: render milling head form partial with validations. -->
+{% extends "base.html" %} {% block title %}Głowica frezarska — edycja |
+TechHelper{% endblock %} {% block content %}
+<section class="app-section">
+  <header>
+    <span class="app-section-eyebrow">Głowice frezarskie</span>
+    <h1 class="app-section-title">Formularz dodawania i edycji</h1>
+    <p class="app-section-lede">
+      Wersja robocza. Zaplanuj pola dla parametrów narzędzia, limitów posuwu i
+      prędkości oraz dodatkowych notatek.
+    </p>
+  </header>
+  <div class="app-alert app-alert--placeholder">
+    Formularz zostanie przygotowany wraz z implementacją CRUD.
+  </div>
 </section>
 {% endblock %}

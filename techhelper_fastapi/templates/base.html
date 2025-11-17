@@ -11,21 +11,17 @@
     <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   </head>
-  <body class="bg-slate-100 min-h-screen text-slate-900">
-    <header class="bg-white shadow-sm">
-      <nav
-        class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4"
-      >
-        <a
-          class="text-lg font-semibold text-blue-600"
-          href="{{ url_for('read_root') }}"
-        >
-          TechHelper
+  <body class="app-body text-slate-900">
+    <header class="app-header">
+      <nav class="app-container app-nav">
+        <a class="app-brand" href="{{ url_for('read_root') }}">
+          <span>TechHelper</span>
+          <span class="app-pill">inżynieria CNC</span>
         </a>
-        <ul class="flex gap-4 text-sm font-medium">
+        <ul class="app-nav-links">
           <li>
             <a
-              class="text-slate-600 hover:text-blue-600"
+              class="app-nav-link {% if request.url.path.startswith('/calculators') %}is-active{% endif %}"
               href="{{ url_for('calculators_home') }}"
             >
               Kalkulatory
@@ -33,7 +29,7 @@
           </li>
           <li>
             <a
-              class="text-slate-600 hover:text-blue-600"
+              class="app-nav-link {% if request.url.path.startswith('/tools') %}is-active{% endif %}"
               href="{{ url_for('tools_home') }}"
             >
               Baza narzędzi
@@ -42,12 +38,13 @@
         </ul>
       </nav>
     </header>
-    <main class="mx-auto max-w-5xl px-6 py-10">
+    <main class="app-container app-main">
       {% block content %}{% endblock %}
     </main>
-    <footer class="bg-white">
-      <div class="mx-auto max-w-5xl px-6 py-4 text-xs text-slate-500">
-        TechHelper MVP — Etap 1 ukończony.
+    <footer class="app-footer">
+      <div class="app-container">
+        TechHelper — kalkulatory prędkości, posuwu i kosztów obróbki oraz baza
+        narzędzi w jednym miejscu.
       </div>
     </footer>
   </body>
