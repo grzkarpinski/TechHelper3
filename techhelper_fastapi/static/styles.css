@@ -97,6 +97,9 @@
   border-radius: var(--app-radius);
   box-shadow: var(--app-shadow);
   padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .app-card--subtle {
