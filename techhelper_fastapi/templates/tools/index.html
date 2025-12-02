@@ -5,23 +5,106 @@
     <span class="app-section-eyebrow">Biblioteka narzędzi</span>
     <h1 class="app-section-title">Zestawienia głowic, frezów i wierteł</h1>
     <p class="app-section-lede">
-      Moduł jest w przygotowaniu. Wkrótce pojawią się pełne widoki CRUD,
-      filtrowanie oraz wyszukiwanie w czasie rzeczywistym dla wszystkich typów
-      narzędzi.
+      Zarządzaj katalogiem narzędzi. Twórz, edytuj, usuwaj i wyszukuj narzędzia
+      — głowice frezarskie, frezy i wiertła w jednym miejscu.
     </p>
   </header>
   <div class="grid gap-5 md:grid-cols-3">
-    <div class="app-card app-card--subtle app-empty-state">
-      <strong>Głowice frezarskie</strong>
-      <span>Formularze i tabele CRUD w przygotowaniu.</span>
+    <a
+      class="app-card group transition duration-150 hover:-translate-y-1 hover:shadow-xl"
+      href="{{ url_for('milling_heads_list') }}"
+    >
+      <div class="space-y-3">
+        <span class="app-pill">✓ Dostępne</span>
+        <h2 class="text-xl font-semibold text-slate-900">Głowice frezarskie</h2>
+        <p class="text-sm text-slate-600">
+          Pełny CRUD z filtrowaniem po średnicy i symbolu narzędzia.
+          Wyszukiwanie w czasie rzeczywistym dzięki HTMX.
+        </p>
+      </div>
+      <span class="app-actions justify-between text-sm text-blue-600 mt-auto">
+        Otwórz bazę
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition group-hover:bg-blue-600 group-hover:text-white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.6"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </span>
+      </span>
+    </a>
+    <div class="app-card group opacity-60">
+      <div class="space-y-3">
+        <span class="app-pill bg-amber-50 text-amber-700">W przygotowaniu</span>
+        <h2 class="text-xl font-semibold text-slate-900">Frezy</h2>
+        <p class="text-sm text-slate-600">
+          Tabela wszystkich profili z wyszukiwaniem w czasie rzeczywistym i
+          zaawansowanym filtrowaniem.
+        </p>
+      </div>
+      <span class="app-actions justify-between text-sm text-slate-400 mt-auto">
+        Niedostępne
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.6"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </span>
+      </span>
     </div>
-    <div class="app-card app-card--subtle app-empty-state">
-      <strong>Frezy</strong>
-      <span>Obsługa pełnego katalogu z filtrowaniem już wkrótce.</span>
-    </div>
-    <div class="app-card app-card--subtle app-empty-state">
-      <strong>Wiertła</strong>
-      <span>Przygotowujemy edycję, duplikowanie i szybkie wyszukiwanie.</span>
+    <div class="app-card group opacity-60">
+      <div class="space-y-3">
+        <span class="app-pill bg-amber-50 text-amber-700">W przygotowaniu</span>
+        <h2 class="text-xl font-semibold text-slate-900">Wiertła</h2>
+        <p class="text-sm text-slate-600">
+          Katalog z grupowaniem po rodzaju (HSS/VHM) i zaawansowanym sortowaniem
+          po parametrach.
+        </p>
+      </div>
+      <span class="app-actions justify-between text-sm text-slate-400 mt-auto">
+        Niedostępne
+        <span
+          class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-400"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.6"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+        </span>
+      </span>
     </div>
   </div>
 </section>

@@ -12,6 +12,13 @@ TechHelper{% endblock %} {% block content %}
     </p>
   </header>
 
+  <div class="app-alert app-alert--info" style="margin-bottom: 1.5rem">
+    <strong>💡 Wskazówka:</strong> Wprowadź wartości dla jednej pary:
+    <strong>Vc + n</strong> (prędkość i obroty) lub
+    <strong>Fz + F</strong> (posuw na ząb i całkowity posuw). Pola z drugiej
+    pary zablokują się automatycznie.
+  </div>
+
   <form
     id="speed-feed-form"
     class="app-card space-y-8"
@@ -23,6 +30,9 @@ TechHelper{% endblock %} {% block content %}
     <div class="app-form-grid">
       <label class="app-field" for="cutting_speed">
         <span>Prędkość skrawania Vc (m/min)</span>
+        <span class="app-field-hint"
+          >Szybkość ruchu narzędzia po powierzchni materiału</span
+        >
         <input
           id="cutting_speed"
           name="cutting_speed"
@@ -35,6 +45,7 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="spindle_speed">
         <span>Obroty wrzeciona n (obr/min)</span>
+        <span class="app-field-hint">Liczba obrotów narzędzia na minutę</span>
         <input
           id="spindle_speed"
           name="spindle_speed"
@@ -47,6 +58,9 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="feed_per_tooth">
         <span>Posuw na ząb Fz (mm/z)</span>
+        <span class="app-field-hint"
+          >Ilość materiału usuwana przez jeden ząb w jednym obrocie</span
+        >
         <input
           id="feed_per_tooth"
           name="feed_per_tooth"
@@ -59,6 +73,10 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="feed_rate">
         <span>Posuw F (mm/min)</span>
+        <span class="app-field-hint"
+          >Całkowita posuwność narzędzia na minutę obejmująca wszystkie
+          zęby</span
+        >
         <input
           id="feed_rate"
           name="feed_rate"
@@ -70,7 +88,10 @@ TechHelper{% endblock %} {% block content %}
         />
       </label>
       <label class="app-field" for="diameter">
-        <span>Średnica narzędzia D (mm)</span>
+        <span class="app-field-required">Średnica narzędzia D (mm)</span>
+        <span class="app-field-hint"
+          >Rozmiar narzędzia — wyrażony w millimetrach</span
+        >
         <input
           id="diameter"
           name="diameter"
@@ -83,7 +104,10 @@ TechHelper{% endblock %} {% block content %}
         />
       </label>
       <label class="app-field" for="teeth">
-        <span>Liczba ostrzy z</span>
+        <span class="app-field-required">Liczba ostrzy z</span>
+        <span class="app-field-hint"
+          >Ilość zębów na narzędziu — wpływa na podział posuwy</span
+        >
         <input
           id="teeth"
           name="teeth"

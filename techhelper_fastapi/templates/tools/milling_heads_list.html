@@ -3,14 +3,42 @@ endblock %} {% block content %}
 <section class="app-section">
   <header>
     <span class="app-section-eyebrow">Głowice frezarskie</span>
-    <h1 class="app-section-title">Lista narzędzi i rekomendowane parametry</h1>
+    <h1 class="app-section-title">Baza głowic frezarskich</h1>
     <p class="app-section-lede">
-      Widok w budowie. Docelowo dodamy tabelę z filtrowaniem po średnicy,
-      symbolu i producencie oraz formularze CRUD dla każdej głowicy.
+      Zarządzanie bazą narzędzi — dodawaj, edytuj i usuwaj głowice frezarskie.
+      Filtruj po średnicy, symbolu lub producencie.
     </p>
   </header>
-  <div class="app-alert app-alert--placeholder">
-    Prace trwają — moduł zostanie uzupełniony w kolejnych iteracjach.
+
+  <!-- Search and Add Button -->
+  <div class="mb-6 flex gap-4 items-end">
+    <div class="flex-1">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Szukaj po średnicy, symbolu lub producencie..."
+        class="app-input w-full"
+        hx-get="/tools/milling-heads/filter"
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#milling-heads-table"
+        autocomplete="off"
+      />
+    </div>
+    <a
+      href="{{ url_for('milling_heads_add_form') }}"
+      class="app-button app-button--primary"
+    >
+      + Dodaj głowicę
+    </a>
   </div>
+
+  <!-- Milling Heads Table (HTMX target) -->
+  <div id="milling-heads-table">
+    {% include "tools/partials/milling_heads_table.html" %}
+  </div>
+
+  {% if error %}
+  <div class="app-alert app-alert--error">{{ error }}</div>
+  {% endif %}
 </section>
 {% endblock %}

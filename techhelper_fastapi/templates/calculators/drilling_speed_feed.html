@@ -15,6 +15,13 @@ wiercenie | TechHelper{% endblock %} {% block content %}
     </p>
   </header>
 
+  <div class="app-alert app-alert--info" style="margin-bottom: 1.5rem">
+    <strong>💡 Wskazówka:</strong> Wprowadź wartości dla jednej pary:
+    <strong>Vc + n</strong> (prędkość i obroty) lub
+    <strong>fn + F</strong> (posuw na obrót i całkowity posuw). Pola z drugiej
+    pary zablokują się automatycznie.
+  </div>
+
   <form
     id="drilling-speed-feed-form"
     class="app-card space-y-8"
@@ -26,6 +33,9 @@ wiercenie | TechHelper{% endblock %} {% block content %}
     <div class="app-form-grid">
       <label class="app-field" for="cutting_speed">
         <span>Prędkość skrawania Vc (m/min)</span>
+        <span class="app-field-hint"
+          >Szybkość ruchu narzędzia po powierzchni materiału</span
+        >
         <input
           id="cutting_speed"
           name="cutting_speed"
@@ -38,6 +48,7 @@ wiercenie | TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="spindle_speed">
         <span>Obroty wrzeciona n (obr/min)</span>
+        <span class="app-field-hint">Liczba obrotów narzędzia na minutę</span>
         <input
           id="spindle_speed"
           name="spindle_speed"
@@ -50,6 +61,9 @@ wiercenie | TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="feed_per_rev">
         <span>Posuw na obrót fn (mm/obr)</span>
+        <span class="app-field-hint"
+          >Ilość materiału usuwanego w jednym pełnym obrocie wiertła</span
+        >
         <input
           id="feed_per_rev"
           name="feed_per_rev"
@@ -62,6 +76,9 @@ wiercenie | TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="feed_rate">
         <span>Posuw F (mm/min)</span>
+        <span class="app-field-hint"
+          >Całkowita posuwność wiertła na minutę</span
+        >
         <input
           id="feed_rate"
           name="feed_rate"
@@ -73,7 +90,10 @@ wiercenie | TechHelper{% endblock %} {% block content %}
         />
       </label>
       <label class="app-field" for="diameter">
-        <span>Średnica wiertła D (mm)</span>
+        <span class="app-field-required">Średnica wiertła D (mm)</span>
+        <span class="app-field-hint"
+          >Rozmiar wiertła — wyrażony w millimetrach</span
+        >
         <input
           id="diameter"
           name="diameter"

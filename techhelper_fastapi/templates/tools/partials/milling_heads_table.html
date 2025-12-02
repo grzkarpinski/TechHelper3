@@ -1,0 +1,68 @@
+<!-- Milling Heads Table Partial (HTMX-updated content) -->
+{% if heads %}
+<div class="overflow-x-auto border border-slate-200 rounded-lg">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Średnica D (mm)
+        </th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">Symbol</th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Producent
+        </th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Liczba ostrzy
+        </th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Materiał
+        </th>
+        <th class="px-4 py-3 text-center font-semibold text-slate-700">
+          Akcje
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for head in heads %}
+      <tr class="border-b border-slate-200 hover:bg-slate-50">
+        <td class="px-4 py-3 font-mono text-slate-900">
+          {{ head.średnica_D_mm }}
+        </td>
+        <td class="px-4 py-3 font-mono text-slate-600">
+          {{ head.symbol_narzędzia }}
+        </td>
+        <td class="px-4 py-3 text-slate-600">{{ head.producent or "—" }}</td>
+        <td class="px-4 py-3 text-slate-600">{{ head.liczba_ostrzy }}</td>
+        <td class="px-4 py-3 text-slate-600">{{ head.materiał or "—" }}</td>
+        <td class="px-4 py-3 text-center">
+          <div class="flex justify-center gap-2">
+            <a
+              href="{{ url_for('milling_heads_edit_form', head_id=head.id) }}"
+              class="app-button app-button--small app-button--secondary"
+            >
+              Edytuj
+            </a>
+            <button
+              hx-delete="/tools/milling-heads/{{ head.id }}"
+              hx-confirm="Czy na pewno chcesz usunąć tę głowicę?"
+              hx-target="#milling-heads-table"
+              hx-swap="outerHTML swap:1s"
+              class="app-button app-button--small app-button--danger"
+            >
+              Usuń
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="app-alert app-alert--placeholder">
+  Brak głowic frezarskich.
+  <a href="{{ url_for('milling_heads_add_form') }}" class="underline"
+    >Dodaj pierwszą</a
+  >.
+</div>
+{% endif %}

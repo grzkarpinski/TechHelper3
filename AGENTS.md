@@ -396,13 +396,13 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
 ### Etap 4: Baza Głowic Frezarskich (4-5h)
 
-- [ ] Model SQLModel
-- [ ] CRUD endpoints
-- [ ] Template: lista + tabela
-- [ ] Template: formularz add/edit
-- [ ] Filtrowanie i wyszukiwanie (HTMX)
-- [ ] Delete functionality
-- [ ] Testy CRUD
+- [x] Model SQLModel
+- [x] CRUD endpoints
+- [x] Template: lista + tabela
+- [x] Template: formularz add/edit
+- [x] Filtrowanie i wyszukiwanie (HTMX)
+- [x] Delete functionality
+- [x] Testy CRUD
 
 ### Etap 5: Baza Frezów (3-4h)
 

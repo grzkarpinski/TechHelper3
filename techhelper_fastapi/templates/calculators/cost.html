@@ -79,6 +79,9 @@ TechHelper{% endblock %} {% block content %}
     <div class="app-form-grid">
       <label class="app-field" for="machine_group-__INDEX__">
         <span>Grupa maszyny</span>
+        <span class="app-field-hint"
+          >Wybierz typ urządzenia i jego stawkę godzinową</span
+        >
         <select
           id="machine_group-__INDEX__"
           name="machine_group"
@@ -95,6 +98,9 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="tpz-__INDEX__">
         <span>Czas przygotowawczo-zakończeniowy Tpz (min)</span>
+        <span class="app-field-hint"
+          >Czas przygotowania maszyny przed faktycznym szlifowaniem</span
+        >
         <input
           id="tpz-__INDEX__"
           name="tpz"
@@ -107,6 +113,9 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="tj-__INDEX__">
         <span>Czas jednostkowy Tj (min)</span>
+        <span class="app-field-hint"
+          >Czas rzeczywistego szlifowania jednej części</span
+        >
         <input
           id="tj-__INDEX__"
           name="tj"
