@@ -1,16 +1,275 @@
-{% extends "base.html" %} {% block title %}Frez — edycja | TechHelper{% endblock
-%} {% block content %}
+{% extends "base.html" %} {% block title %}{% if is_edit %}Edytuj{% else
+%}Dodaj{% endif %} frez | TechHelper{% endblock %} {% block content %}
 <section class="app-section">
   <header>
     <span class="app-section-eyebrow">Frezy</span>
-    <h1 class="app-section-title">Formularz dodawania i edycji</h1>
-    <p class="app-section-lede">
-      Sekcja w przygotowaniu. W planie znajdują się pola dla danych
-      geometrycznych, limitów posuwu oraz notatek procesowych.
-    </p>
+    <h1 class="app-section-title">
+      {% if is_edit %}Edytuj frez{% else %}Dodaj nowy frez {% endif %}
+    </h1>
   </header>
-  <div class="app-alert app-alert--placeholder">
-    Formularz zostanie udostępniony w trakcie prac nad bazą narzędzi.
+
+  <!-- Error Messages -->
+  {% if errors %}
+  <div class="app-alert app-alert--error mb-6">
+    <ul class="list-disc list-inside">
+      {% for error in errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
   </div>
+  {% endif %}
+
+  <!-- Form -->
+  <form
+    method="POST"
+    action="/tools/milling-cutters{% if is_edit %}/{{ cutter.id }}{% endif %}"
+    class="max-w-3xl"
+  >
+    <div class="grid grid-cols-2 gap-6 mb-8">
+      <!-- Required Fields Section -->
+      <div class="col-span-2">
+        <h3
+          class="text-lg font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200"
+        >
+          Dane wymagane
+        </h3>
+      </div>
+
+      <!-- Średnica D -->
+      <div>
+        <label for="średnica_D_mm" class="app-label">
+          Średnica D (mm) <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="number"
+          id="średnica_D_mm"
+          name="średnica_D_mm"
+          step="0.01"
+          required
+          min="0.01"
+          value="{% if cutter %}{{ cutter.średnica_D_mm }}{% elif form_data %}{{ form_data.średnica_D_mm }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Symbol Narzędzia -->
+      <div>
+        <label for="symbol_narzędzia" class="app-label">
+          Symbol narzędzia <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="text"
+          id="symbol_narzędzia"
+          name="symbol_narzędzia"
+          required
+          value="{% if cutter %}{{ cutter.symbol_narzędzia }}{% elif form_data %}{{ form_data.symbol_narzędzia }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. EMF-16-50"
+        />
+      </div>
+
+      <!-- Liczba Ostrzy -->
+      <div>
+        <label for="liczba_ostrzy" class="app-label">
+          Liczba ostrzy <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="number"
+          id="liczba_ostrzy"
+          name="liczba_ostrzy"
+          required
+          min="1"
+          value="{% if cutter %}{{ cutter.liczba_ostrzy }}{% elif form_data %}{{ form_data.liczba_ostrzy }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Optional Fields Section -->
+      <div class="col-span-2 mt-6">
+        <h3
+          class="text-lg font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200"
+        >
+          Dane opcjonalne
+        </h3>
+      </div>
+
+      <!-- Producent -->
+      <div>
+        <label for="producent" class="app-label">Producent</label>
+        <input
+          type="text"
+          id="producent"
+          name="producent"
+          value="{% if cutter %}{{ cutter.producent }}{% elif form_data %}{{ form_data.producent }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. Iscar, Sandvik"
+        />
+      </div>
+
+      <!-- Materiał -->
+      <div>
+        <label for="materiał" class="app-label">Materiał obrabiany</label>
+        <input
+          type="text"
+          id="materiał"
+          name="materiał"
+          value="{% if cutter %}{{ cutter.materiał }}{% elif form_data %}{{ form_data.materiał }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. Stal, Aluminium, Żeliwo"
+        />
+      </div>
+
+      <!-- Posuw na Ząb Min -->
+      <div>
+        <label for="posuw_na_ząb_min" class="app-label"
+          >Posuw na ząb min (mm/ząb)</label
+        >
+        <input
+          type="number"
+          id="posuw_na_ząb_min"
+          name="posuw_na_ząb_min"
+          step="0.001"
+          min="0"
+          value="{% if cutter and cutter.posuw_na_ząb_min %}{{ cutter.posuw_na_ząb_min }}{% elif form_data %}{{ form_data.posuw_na_ząb_min }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Posuw na Ząb Max -->
+      <div>
+        <label for="posuw_na_ząb_max" class="app-label"
+          >Posuw na ząb max (mm/ząb)</label
+        >
+        <input
+          type="number"
+          id="posuw_na_ząb_max"
+          name="posuw_na_ząb_max"
+          step="0.001"
+          min="0"
+          value="{% if cutter and cutter.posuw_na_ząb_max %}{{ cutter.posuw_na_ząb_max }}{% elif form_data %}{{ form_data.posuw_na_ząb_max }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Prędkość Skrawania Min -->
+      <div>
+        <label for="prędkość_skrawania_min" class="app-label"
+          >Prędkość skrawania min (m/min)</label
+        >
+        <input
+          type="number"
+          id="prędkość_skrawania_min"
+          name="prędkość_skrawania_min"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.prędkość_skrawania_min %}{{ cutter.prędkość_skrawania_min }}{% elif form_data %}{{ form_data.prędkość_skrawania_min }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Prędkość Skrawania Max -->
+      <div>
+        <label for="prędkość_skrawania_max" class="app-label"
+          >Prędkość skrawania max (m/min)</label
+        >
+        <input
+          type="number"
+          id="prędkość_skrawania_max"
+          name="prędkość_skrawania_max"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.prędkość_skrawania_max %}{{ cutter.prędkość_skrawania_max }}{% elif form_data %}{{ form_data.prędkość_skrawania_max }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Obroty -->
+      <div>
+        <label for="obroty" class="app-label">Obroty (obr/min)</label>
+        <input
+          type="number"
+          id="obroty"
+          name="obroty"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.obroty %}{{ cutter.obroty }}{% elif form_data %}{{ form_data.obroty }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Posuw -->
+      <div>
+        <label for="posuw" class="app-label">Posuw (mm/min)</label>
+        <input
+          type="number"
+          id="posuw"
+          name="posuw"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.posuw %}{{ cutter.posuw }}{% elif form_data %}{{ form_data.posuw }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Głębokość Skrawania -->
+      <div>
+        <label for="głębokość_skrawania_ap" class="app-label"
+          >Głębokość skrawania (mm)</label
+        >
+        <input
+          type="number"
+          id="głębokość_skrawania_ap"
+          name="głębokość_skrawania_ap"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.głębokość_skrawania_ap %}{{ cutter.głębokość_skrawania_ap }}{% elif form_data %}{{ form_data.głębokość_skrawania_ap }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Szerokość Skrawania AE (%) -->
+      <div>
+        <label for="szerokość_skrawania_ae_procent" class="app-label"
+          >Szerokość skrawania AE (%)</label
+        >
+        <input
+          type="number"
+          id="szerokość_skrawania_ae_procent"
+          name="szerokość_skrawania_ae_procent"
+          step="0.1"
+          min="0"
+          value="{% if cutter and cutter.szerokość_skrawania_ae_procent %}{{ cutter.szerokość_skrawania_ae_procent }}{% elif form_data %}{{ form_data.szerokość_skrawania_ae_procent }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Uwagi -->
+      <div class="col-span-2">
+        <label for="uwagi" class="app-label">Uwagi</label>
+        <textarea
+          id="uwagi"
+          name="uwagi"
+          rows="4"
+          class="app-input w-full"
+          placeholder="Dodatkowe informacje dotyczące narzędzia..."
+        >
+{% if cutter %}{{ cutter.uwagi }}{% elif form_data %}{{ form_data.uwagi }}{% endif %}</textarea
+        >
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex gap-3 pt-4 border-t border-slate-200">
+      <button type="submit" class="app-button app-button--primary">
+        {% if is_edit %}Zaktualizuj{% else %}Dodaj{% endif %}
+      </button>
+      <a
+        href="{{ url_for('milling_cutters_list') }}"
+        class="app-button app-button--secondary"
+      >
+        Anuluj
+      </a>
+    </div>
+  </form>
 </section>
 {% endblock %}

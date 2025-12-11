@@ -411,19 +411,29 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 
 ### Etap 5: Baza Frezów (3-4h)
 
-- [ ] Model SQLModel
-- [ ] CRUD endpoints
-- [ ] Templates (podobne do głowic)
-- [ ] Filtrowanie
-- [ ] Testy CRUD
+- [x] Model SQLModel (15 fields: 3 required + 12 optional + ae_percent)
+- [x] CRUD endpoints (9 total: list, filter, add_form, edit_form, details, create, update, delete, home)
+- [x] Templates (4: list, form, details, table partial)
+- [x] Filtrowanie (symbol, manufacturer, diameter)
+- [x] Testy CRUD (26 tests - CREATE:6, READ:4, UPDATE:2, DELETE:1, DETAILS:2, FILTER:5, INTEGRATION:1, EDGE:5)
+- [x] Sorting by diameter (default ascending)
+- [x] HTMX integration
+- [x] Validation (required fields, positive numerics)
+- [x] Database registration (SQLModel metadata)
+- [x] UI activation (Frezy button in tools/index.html)
 
 ### Etap 6: Baza Wierteł (3-4h)
 
-- [ ] Model SQLModel
-- [ ] CRUD endpoints
-- [ ] Templates
-- [ ] Filtrowanie (+ rodzaj_wiertła)
-- [ ] Testy CRUD
+- [x] Model SQLModel (13 fields: 3 required + 10 optional)
+- [x] CRUD endpoints (9 total: list, filter, add_form, edit_form, details, create, update, delete, home)
+- [x] Templates (4: list, form, details, table partial)
+- [x] Filtrowanie (symbol, manufacturer, drill type)
+- [x] Testy CRUD (26 tests - CREATE:6, READ:4, UPDATE:2, DELETE:1, DETAILS:2, FILTER:5, INTEGRATION:1, EDGE:5)
+- [x] Sorting by diameter (default ascending)
+- [x] HTMX integration
+- [x] Validation (required fields, positive numerics)
+- [x] Database registration (SQLModel metadata)
+- [x] UI activation (Wiertła button in tools/index.html)
 
 ### Etap 7: Integracja i testy końcowe (2-3h)
 
@@ -444,6 +454,13 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Dokumentacja (README)
 
 **Szacowany czas: 22-30h** (rozłożone na ~2 tygodnie przy 1-2h/dzień)
+
+**Status aktualny:**
+
+- ✅ Etapy 1-6 ukończone (Setup, 2 Kalkulatory, Kalkulator kosztów, Baza Głowic, Baza Frezów, Baza Wierteł)
+- 🔄 Etapy 7-8 pozostałe (Integracja i testy końcowe, Deployment)
+- ✅ Wszystkie testy przechodzą (77/77 testów CRUD - Heads: 26, Cutters: 26, Drills: 25+)
+- ✅ UI w pełni funkcjonalne
 
 ---
 

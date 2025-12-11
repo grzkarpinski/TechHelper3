@@ -2,15 +2,37 @@
 block content %}
 <section class="app-section">
   <header>
-    <span class="app-section-eyebrow">Wiertła</span>
-    <h1 class="app-section-title">Katalog wierteł i parametrów posuwu</h1>
-    <p class="app-section-lede">
-      Przygotowujemy tabelę z filtrowaniem po średnicy, producencie i rodzaju
-      wiertła oraz dedykowane formularze CRUD.
-    </p>
+    <div class="flex justify-between items-center">
+      <div>
+        <span class="app-section-eyebrow">Wiertła</span>
+        <h1 class="app-section-title">Katalog wierteł</h1>
+        <p class="app-section-lede">
+          Baza wierteł z parametrami posuwu fn i prędkości skrawania.
+        </p>
+      </div>
+      <a
+        href="{{ url_for('drills_add_form') }}"
+        class="app-button app-button--primary"
+      >
+        + Dodaj wiertło
+      </a>
+    </div>
   </header>
-  <div class="app-alert app-alert--placeholder">
-    Funkcjonalność zostanie dodana w kolejnych sprintach.
+
+  <!-- Search Box -->
+  <div class="mb-6 max-w-2xl">
+    <input
+      type="text"
+      name="search"
+      placeholder="Szukaj po symbolu lub producencie..."
+      hx-get="{{ url_for('drills_filter') }}"
+      hx-trigger="keyup changed delay:500ms"
+      hx-target="#drills-table"
+      class="app-input w-full"
+    />
   </div>
+
+  <!-- Results Table -->
+  <div id="drills-table">{% include "tools/partials/drills_table.html" %}</div>
 </section>
 {% endblock %}

@@ -17,6 +17,12 @@ engine = create_engine(
     connect_args={"check_same_thread": False},
 )
 
+# Import models to ensure they are registered with SQLModel
+# Must happen after engine is created, before metadata.create_all()
+from .models.milling_heads import MillingHeads  # noqa: F401, E402
+from .models.milling_cutters import MillingCutters  # noqa: F401, E402
+from .models.drills import Drills  # noqa: F401, E402
+
 
 def create_db_and_tables() -> None:
     """Create database tables if they do not exist."""

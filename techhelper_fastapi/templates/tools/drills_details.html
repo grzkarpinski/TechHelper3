@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block title %}Szczegóły wiertła | TechHelper{%
+endblock %} {% block content %}
+<section class="app-section">
+  <div class="mb-4">
+    <a
+      href="{{ url_for('drills_list') }}"
+      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+    >
+      ← Wróć do listy
+    </a>
+  </div>
+
+  <div class="app-card">
+    <div class="mb-6">
+      <span class="app-pill">Szczegóły narzędzia</span>
+      <h1 class="app-section-title mt-2">{{ drill.symbol_narzędzia }}</h1>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Dane wymagane -->
+      <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-slate-900">Dane wymagane</h2>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Średnica D (mm)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.średnica_D_mm }}
+          </p>
+        </div>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Symbol narzędzia</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.symbol_narzędzia }}
+          </p>
+        </div>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Rodzaj wiertła</p>
+          <p class="text-lg text-slate-900">{{ drill.rodzaj_wiertła }}</p>
+        </div>
+      </div>
+
+      <!-- Dane opcjonalne -->
+      <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-slate-900">Dane opcjonalne</h2>
+
+        {% if drill.producent %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Producent</p>
+          <p class="text-lg text-slate-900">{{ drill.producent }}</p>
+        </div>
+        {% endif %} {% if drill.symbol_płytki %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Symbol płytki</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.symbol_płytki }}
+          </p>
+        </div>
+        {% endif %} {% if drill.długość_robocza_mm %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Długość robocza</p>
+          <p class="text-lg text-slate-900">
+            {{ drill.długość_robocza_mm }} mm
+          </p>
+        </div>
+        {% endif %} {% if drill.liczba_ostrzy %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Liczba ostrzy</p>
+          <p class="text-lg text-slate-900">{{ drill.liczba_ostrzy }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Parametry skrawania -->
+    <div class="mt-8 pt-8 border-t border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">
+        Parametry skrawania
+      </h2>
+      <div class="grid gap-4 md:grid-cols-4">
+        {% if drill.posuw_fn_min %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">
+            Min. posuw na obrót (fn)
+          </p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.posuw_fn_min }}
+          </p>
+        </div>
+        {% endif %} {% if drill.posuw_fn_max %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">
+            Max. posuw na obrót (fn)
+          </p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.posuw_fn_max }}
+          </p>
+        </div>
+        {% endif %} {% if drill.prędkość_skrawania_min %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Min. prędkość (Vc)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.prędkość_skrawania_min }}
+          </p>
+        </div>
+        {% endif %} {% if drill.prędkość_skrawania_max %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Max. prędkość (Vc)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ drill.prędkość_skrawania_max }}
+          </p>
+        </div>
+        {% endif %} {% if drill.obroty %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Obroty (n)</p>
+          <p class="text-lg font-mono text-slate-900">{{ drill.obroty }}</p>
+        </div>
+        {% endif %} {% if drill.posuw %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Posuw (F)</p>
+          <p class="text-lg font-mono text-slate-900">{{ drill.posuw }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Uwagi -->
+    {% if drill.uwagi %}
+    <div class="mt-8 pt-8 border-t border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">Uwagi</h2>
+      <div
+        class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-slate-900"
+      >
+        {{ drill.uwagi }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Akcje -->
+    <div class="mt-8 pt-8 border-t border-slate-200 flex gap-3">
+      <a
+        href="{{ url_for('drills_edit_form', drill_id=drill.id) }}"
+        class="app-button app-button--secondary"
+      >
+        Edytuj
+      </a>
+      <button
+        hx-delete="/tools/drills/{{ drill.id }}"
+        hx-confirm="Czy na pewno chcesz usunąć to wiertło?"
+        hx-on="htmx:afterRequest: if(event.detail.xhr.status===303) window.location.href='{{ url_for('drills_list') }}'"
+        class="app-button app-button--danger"
+      >
+        Usuń
+      </button>
+    </div>
+  </div>
+</section>
+{% endblock %}

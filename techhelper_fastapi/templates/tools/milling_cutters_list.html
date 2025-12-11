@@ -3,14 +3,42 @@ block content %}
 <section class="app-section">
   <header>
     <span class="app-section-eyebrow">Frezy</span>
-    <h1 class="app-section-title">Zestawienie frezów i parametrów roboczych</h1>
+    <h1 class="app-section-title">Baza frezów</h1>
     <p class="app-section-lede">
-      Moduł jest przygotowywany. Wkrótce pojawi się tabela z filtrowaniem oraz
-      szybkim wyszukiwaniem po symbolu, średnicy i producencie.
+      Zarządzanie bazą narzędzi — dodawaj, edytuj i usuwaj frezy. Filtruj po
+      średnicy, symbolu lub producencie.
     </p>
   </header>
-  <div class="app-alert app-alert--placeholder">
-    Widok listy frezów zostanie aktywowany po zakończeniu implementacji CRUD.
+
+  <!-- Search and Add Button -->
+  <div class="mb-6 flex gap-4 items-end">
+    <div class="flex-1">
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Szukaj po średnicy, symbolu lub producencie..."
+        class="app-input w-full"
+        hx-get="/tools/milling-cutters/filter"
+        hx-trigger="keyup changed delay:500ms"
+        hx-target="#milling-cutters-table"
+        autocomplete="off"
+      />
+    </div>
+    <a
+      href="{{ url_for('milling_cutters_add_form') }}"
+      class="app-button app-button--primary"
+    >
+      + Dodaj frez
+    </a>
   </div>
+
+  <!-- Milling Cutters Table (HTMX target) -->
+  <div id="milling-cutters-table">
+    {% include "tools/partials/milling_cutters_table.html" %}
+  </div>
+
+  {% if error %}
+  <div class="app-alert app-alert--error">{{ error }}</div>
+  {% endif %}
 </section>
 {% endblock %}

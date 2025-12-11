@@ -1,16 +1,295 @@
-{% extends "base.html" %} {% block title %}Wiertło — edycja | TechHelper{%
-endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}{% if is_edit %}Edytuj{% else
+%}Dodaj{% endif %} wiertło | TechHelper{% endblock %} {% block content %}
 <section class="app-section">
   <header>
     <span class="app-section-eyebrow">Wiertła</span>
-    <h1 class="app-section-title">Formularz dodawania i edycji</h1>
-    <p class="app-section-lede">
-      Tworzymy formularz pozwalający rejestrować typ wiertła, zakres posuwów fn
-      oraz rekomendowane prędkości skrawania.
-    </p>
+    <h1 class="app-section-title">
+      {% if is_edit %}Edytuj wiertło{% else %}Dodaj nowe wiertło {% endif %}
+    </h1>
   </header>
-  <div class="app-alert app-alert--placeholder">
-    Formularz zostanie aktywowany wraz z implementacją CRUD.
+
+  <!-- Error Messages -->
+  {% if errors %}
+  <div class="app-alert app-alert--error mb-6">
+    <ul class="list-disc list-inside">
+      {% for error in errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
   </div>
+  {% endif %}
+
+  <!-- Form -->
+  <form
+    method="POST"
+    action="/tools/drills{% if is_edit %}/{{ drill.id }}{% endif %}"
+    class="max-w-3xl"
+  >
+    <div class="grid grid-cols-2 gap-6 mb-8">
+      <!-- Required Fields Section -->
+      <div class="col-span-2">
+        <h3
+          class="text-lg font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200"
+        >
+          Dane wymagane
+        </h3>
+      </div>
+
+      <!-- Średnica D -->
+      <div>
+        <label for="średnica_D_mm" class="app-label">
+          Średnica D (mm) <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="number"
+          id="średnica_D_mm"
+          name="średnica_D_mm"
+          step="0.01"
+          required
+          min="0.01"
+          value="{% if drill %}{{ drill.średnica_D_mm }}{% elif form_data %}{{ form_data.średnica_D_mm }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Symbol Narzędzia -->
+      <div>
+        <label for="symbol_narzędzia" class="app-label">
+          Symbol narzędzia <span class="text-red-600">*</span>
+        </label>
+        <input
+          type="text"
+          id="symbol_narzędzia"
+          name="symbol_narzędzia"
+          required
+          value="{% if drill %}{{ drill.symbol_narzędzia }}{% elif form_data %}{{ form_data.symbol_narzędzia }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. DIN-338-10"
+        />
+      </div>
+
+      <!-- Rodzaj Wiertła -->
+      <div class="col-span-2">
+        <label for="rodzaj_wiertła" class="app-label">
+          Rodzaj wiertła <span class="text-red-600">*</span>
+        </label>
+        <select
+          id="rodzaj_wiertła"
+          name="rodzaj_wiertła"
+          required
+          class="app-input w-full"
+        >
+          <option value="">-- Wybierz rodzaj --</option>
+          <option
+            value="HSS"
+            {% if drill and drill.rodzaj_wiertła == 'HSS' %}selected{% elif form_data and form_data.rodzaj_wiertła == 'HSS' %}selected{% endif %}
+          >
+            HSS
+          </option>
+          <option
+            value="VHM"
+            {% if drill and drill.rodzaj_wiertła == 'VHM' %}selected{% elif form_data and form_data.rodzaj_wiertła == 'VHM' %}selected{% endif %}
+          >
+            VHM
+          </option>
+          <option
+            value="na 1 płytkę"
+            {% if drill and drill.rodzaj_wiertła == 'na 1 płytkę' %}selected{% elif form_data and form_data.rodzaj_wiertła == 'na 1 płytkę' %}selected{% endif %}
+          >
+            Na 1 płytkę
+          </option>
+          <option
+            value="na 2 płytki"
+            {% if drill and drill.rodzaj_wiertła == 'na 2 płytki' %}selected{% elif form_data and form_data.rodzaj_wiertła == 'na 2 płytki' %}selected{% endif %}
+          >
+            Na 2 płytki
+          </option>
+        </select>
+      </div>
+
+      <!-- Optional Fields Section -->
+      <div class="col-span-2 mt-6">
+        <h3
+          class="text-lg font-semibold text-slate-900 mb-4 pb-2 border-b border-slate-200"
+        >
+          Dane opcjonalne
+        </h3>
+      </div>
+
+      <!-- Producent -->
+      <div>
+        <label for="producent" class="app-label">Producent</label>
+        <input
+          type="text"
+          id="producent"
+          name="producent"
+          value="{% if drill %}{{ drill.producent }}{% elif form_data %}{{ form_data.producent }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. Bosch, DeWalt"
+        />
+      </div>
+
+      <!-- Symbol Płytki -->
+      <div>
+        <label for="symbol_płytki" class="app-label">Symbol płytki</label>
+        <input
+          type="text"
+          id="symbol_płytki"
+          name="symbol_płytki"
+          value="{% if drill %}{{ drill.symbol_płytki }}{% elif form_data %}{{ form_data.symbol_płytki }}{% endif %}"
+          class="app-input w-full"
+          placeholder="np. ZCGW-080..."
+        />
+      </div>
+
+      <!-- Długość Robocza -->
+      <div>
+        <label for="długość_robocza_mm" class="app-label"
+          >Długość robocza (mm)</label
+        >
+        <input
+          type="number"
+          id="długość_robocza_mm"
+          name="długość_robocza_mm"
+          step="0.1"
+          min="0"
+          value="{% if drill and drill.długość_robocza_mm %}{{ drill.długość_robocza_mm }}{% elif form_data %}{{ form_data.długość_robocza_mm }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Liczba Ostrzy -->
+      <div>
+        <label for="liczba_ostrzy" class="app-label">Liczba ostrzy</label>
+        <input
+          type="number"
+          id="liczba_ostrzy"
+          name="liczba_ostrzy"
+          min="0"
+          value="{% if drill and drill.liczba_ostrzy %}{{ drill.liczba_ostrzy }}{% elif form_data %}{{ form_data.liczba_ostrzy }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Posuw fn Min -->
+      <div>
+        <label for="posuw_fn_min" class="app-label"
+          >Posuw fn min (mm/obr)</label
+        >
+        <input
+          type="number"
+          id="posuw_fn_min"
+          name="posuw_fn_min"
+          step="0.001"
+          min="0"
+          value="{% if drill and drill.posuw_fn_min %}{{ drill.posuw_fn_min }}{% elif form_data %}{{ form_data.posuw_fn_min }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Posuw fn Max -->
+      <div>
+        <label for="posuw_fn_max" class="app-label"
+          >Posuw fn max (mm/obr)</label
+        >
+        <input
+          type="number"
+          id="posuw_fn_max"
+          name="posuw_fn_max"
+          step="0.001"
+          min="0"
+          value="{% if drill and drill.posuw_fn_max %}{{ drill.posuw_fn_max }}{% elif form_data %}{{ form_data.posuw_fn_max }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Prędkość Skrawania Min -->
+      <div>
+        <label for="prędkość_skrawania_min" class="app-label"
+          >Prędkość skrawania min (m/min)</label
+        >
+        <input
+          type="number"
+          id="prędkość_skrawania_min"
+          name="prędkość_skrawania_min"
+          step="0.1"
+          min="0"
+          value="{% if drill and drill.prędkość_skrawania_min %}{{ drill.prędkość_skrawania_min }}{% elif form_data %}{{ form_data.prędkość_skrawania_min }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Prędkość Skrawania Max -->
+      <div>
+        <label for="prędkość_skrawania_max" class="app-label"
+          >Prędkość skrawania max (m/min)</label
+        >
+        <input
+          type="number"
+          id="prędkość_skrawania_max"
+          name="prędkość_skrawania_max"
+          step="0.1"
+          min="0"
+          value="{% if drill and drill.prędkość_skrawania_max %}{{ drill.prędkość_skrawania_max }}{% elif form_data %}{{ form_data.prędkość_skrawania_max }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Obroty -->
+      <div>
+        <label for="obroty" class="app-label">Obroty (obr/min)</label>
+        <input
+          type="number"
+          id="obroty"
+          name="obroty"
+          step="0.1"
+          min="0"
+          value="{% if drill and drill.obroty %}{{ drill.obroty }}{% elif form_data %}{{ form_data.obroty }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Posuw -->
+      <div>
+        <label for="posuw" class="app-label">Posuw (mm/min)</label>
+        <input
+          type="number"
+          id="posuw"
+          name="posuw"
+          step="0.1"
+          min="0"
+          value="{% if drill and drill.posuw %}{{ drill.posuw }}{% elif form_data %}{{ form_data.posuw }}{% endif %}"
+          class="app-input w-full"
+        />
+      </div>
+
+      <!-- Uwagi -->
+      <div class="col-span-2">
+        <label for="uwagi" class="app-label">Uwagi</label>
+        <textarea
+          id="uwagi"
+          name="uwagi"
+          rows="4"
+          class="app-input w-full"
+          placeholder="Dodatkowe informacje dotyczące narzędzia..."
+        >
+{% if drill %}{{ drill.uwagi }}{% elif form_data %}{{ form_data.uwagi }}{% endif %}</textarea
+        >
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex gap-3 pt-4 border-t border-slate-200">
+      <button type="submit" class="app-button app-button--primary">
+        {% if is_edit %}Zaktualizuj{% else %}Dodaj{% endif %}
+      </button>
+      <a
+        href="{{ url_for('drills_list') }}"
+        class="app-button app-button--secondary"
+      >
+        Anuluj
+      </a>
+    </div>
+  </form>
 </section>
 {% endblock %}

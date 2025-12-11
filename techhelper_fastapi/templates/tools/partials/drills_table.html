@@ -1,0 +1,67 @@
+<!-- Drills Table Partial (HTMX-updated content) -->
+{% if drills %}
+<div class="overflow-x-auto border border-slate-200 rounded-lg">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 border-b border-slate-200">
+      <tr>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Średnica D (mm)
+        </th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">Symbol</th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">Rodzaj</th>
+        <th class="px-4 py-3 text-left font-semibold text-slate-700">
+          Producent
+        </th>
+        <th class="px-4 py-3 text-center font-semibold text-slate-700">
+          Akcje
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for drill in drills %}
+      <tr class="border-b border-slate-200 hover:bg-slate-50">
+        <td class="px-4 py-3 font-mono text-slate-900">
+          {{ drill.średnica_D_mm }}
+        </td>
+        <td class="px-4 py-3 font-mono text-slate-600">
+          {{ drill.symbol_narzędzia }}
+        </td>
+        <td class="px-4 py-3 text-slate-600">{{ drill.rodzaj_wiertła }}</td>
+        <td class="px-4 py-3 text-slate-600">{{ drill.producent or "—" }}</td>
+        <td class="px-4 py-3 text-center">
+          <div class="flex justify-center gap-2">
+            <a
+              href="{{ url_for('drills_details', drill_id=drill.id) }}"
+              class="app-button app-button--small app-button--ghost"
+            >
+              Szczegóły
+            </a>
+            <a
+              href="{{ url_for('drills_edit_form', drill_id=drill.id) }}"
+              class="app-button app-button--small app-button--secondary"
+            >
+              Edytuj
+            </a>
+            <button
+              hx-delete="/tools/drills/{{ drill.id }}"
+              hx-confirm="Czy na pewno chcesz usunąć to wiertło?"
+              hx-target="#drills-table"
+              hx-swap="outerHTML swap:1s"
+              class="app-button app-button--small app-button--danger"
+            >
+              Usuń
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="app-alert app-alert--placeholder">
+  Brak wierteł.
+  <a href="{{ url_for('drills_add_form') }}" class="underline">Dodaj pierwsze</a
+  >.
+</div>
+{% endif %}
