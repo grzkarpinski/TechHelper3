@@ -37,6 +37,12 @@
         <td class="px-4 py-3 text-center">
           <div class="flex justify-center gap-2">
             <a
+              href="{{ url_for('milling_heads_details', head_id=head.id) }}"
+              class="app-button app-button--small app-button--ghost"
+            >
+              Szczegóły
+            </a>
+            <a
               href="{{ url_for('milling_heads_edit_form', head_id=head.id) }}"
               class="app-button app-button--small app-button--secondary"
             >

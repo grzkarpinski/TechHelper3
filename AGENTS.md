@@ -400,9 +400,14 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [x] CRUD endpoints
 - [x] Template: lista + tabela
 - [x] Template: formularz add/edit
+- [x] Template: strona szczegółów
 - [x] Filtrowanie i wyszukiwanie (HTMX)
 - [x] Delete functionality
-- [x] Testy CRUD
+- [x] Sortowanie po średnicy (domyślnie rosnąco)
+- [x] Endpoint szczegółów narzędzia
+- [x] Przycisk "Szczegóły" w tabeli
+- [x] Testy CRUD + testy dla szczegółów (26 testów)
+- [x] Nawigacja między modułami
 
 ### Etap 5: Baza Frezów (3-4h)
 

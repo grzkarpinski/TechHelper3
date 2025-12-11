@@ -1,0 +1,169 @@
+{% extends "base.html" %} {% block title %}Szczegóły głowicy | TechHelper{%
+endblock %} {% block content %}
+<section class="app-section">
+  <div class="mb-4">
+    <a
+      href="{{ url_for('milling_heads_list') }}"
+      class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+    >
+      ← Wróć do listy
+    </a>
+  </div>
+
+  <div class="app-card">
+    <div class="mb-6">
+      <span class="app-pill">Szczegóły narzędzia</span>
+      <h1 class="app-section-title mt-2">{{ head.symbol_narzędzia }}</h1>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      <!-- Dane wymagane -->
+      <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-slate-900">Dane wymagane</h2>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Średnica D (mm)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.średnica_D_mm }}
+          </p>
+        </div>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Symbol narzędzia</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.symbol_narzędzia }}
+          </p>
+        </div>
+
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Liczba ostrzy</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.liczba_ostrzy }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Dane opcjonalne -->
+      <div class="space-y-4">
+        <h2 class="text-lg font-semibold text-slate-900">Dane opcjonalne</h2>
+
+        {% if head.producent %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Producent</p>
+          <p class="text-lg text-slate-900">{{ head.producent }}</p>
+        </div>
+        {% endif %} {% if head.symbol_płytki %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Symbol płytki</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.symbol_płytki }}
+          </p>
+        </div>
+        {% endif %} {% if head.materiał %}
+        <div class="border-b border-slate-200 pb-3">
+          <p class="text-sm text-slate-600 font-medium">Materiał</p>
+          <p class="text-lg text-slate-900">{{ head.materiał }}</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Parametry skrawania -->
+    <div class="mt-8 pt-8 border-t border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">
+        Parametry skrawania
+      </h2>
+      <div class="grid gap-4 md:grid-cols-4">
+        {% if head.posuw_na_ząb_min %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">
+            Min. posuw na ząb (fz)
+          </p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.posuw_na_ząb_min }}
+          </p>
+        </div>
+        {% endif %} {% if head.posuw_na_ząb_max %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">
+            Max. posuw na ząb (fz)
+          </p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.posuw_na_ząb_max }}
+          </p>
+        </div>
+        {% endif %} {% if head.prędkość_skrawania_min %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Min. prędkość (Vc)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.prędkość_skrawania_min }}
+          </p>
+        </div>
+        {% endif %} {% if head.prędkość_skrawania_max %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Max. prędkość (Vc)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.prędkość_skrawania_max }}
+          </p>
+        </div>
+        {% endif %} {% if head.obroty %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Obroty (n)</p>
+          <p class="text-lg font-mono text-slate-900">{{ head.obroty }}</p>
+        </div>
+        {% endif %} {% if head.posuw %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Posuw (F)</p>
+          <p class="text-lg font-mono text-slate-900">{{ head.posuw }}</p>
+        </div>
+        {% endif %} {% if head.głębokość_skrawania_ap %}
+        <div class="bg-slate-50 p-4 rounded-lg">
+          <p class="text-sm text-slate-600 font-medium">Głębokość (ap)</p>
+          <p class="text-lg font-mono text-slate-900">
+            {{ head.głębokość_skrawania_ap }}
+          </p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Uwagi -->
+    {% if head.uwagi %}
+    <div class="mt-8 pt-8 border-t border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-900 mb-4">Uwagi</h2>
+      <div
+        class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-slate-900"
+      >
+        {{ head.uwagi }}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Akcje -->
+    <div class="mt-8 pt-8 border-t border-slate-200 flex gap-3">
+      <a
+        href="{{ url_for('milling_heads_edit_form', head_id=head.id) }}"
+        class="app-button app-button--secondary"
+      >
+        Edytuj
+      </a>
+      <button
+        hx-delete="/tools/milling-heads/{{ head.id }}"
+        hx-confirm="Czy na pewno chcesz usunąć tę głowicę?"
+        hx-target="body"
+        hx-swap="none"
+        hx-on="htmx:afterRequest: window.location.href='{{ url_for('milling_heads_list') }}'"
+        class="app-button app-button--danger"
+      >
+        Usuń
+      </button>
+      <a
+        href="{{ url_for('milling_heads_list') }}"
+        class="app-button app-button--ghost ml-auto"
+      >
+        Zamknij
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

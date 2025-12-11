@@ -36,8 +36,10 @@ async def milling_heads_list(
 	request: Request,
 	session: Session = Depends(get_session),
 ) -> HTMLResponse:
-	"""Render milling heads list page."""
-	heads = session.exec(select(MillingHeads)).all()
+	"""Render milling heads list page (sorted by diameter ascending)."""
+	heads = session.exec(
+		select(MillingHeads).order_by(MillingHeads.średnica_D_mm.asc())
+	).all()
 	return templates.TemplateResponse(
 		request,
 		"tools/milling_heads_list.html",
@@ -72,6 +74,8 @@ async def milling_heads_filter(
 		except ValueError:
 			pass
 
+	# Sort by diameter ascending
+	query = query.order_by(MillingHeads.średnica_D_mm.asc())
 	heads = session.exec(query).all()
 	return templates.TemplateResponse(
 		request,
@@ -109,6 +113,28 @@ async def milling_heads_edit_form(
 		request,
 		"tools/milling_heads_form.html",
 		{"is_edit": True, "head": head, "errors": []},
+	)
+
+
+@router.get("/milling-heads/{head_id}/details", response_class=HTMLResponse, name="milling_heads_details")
+async def milling_heads_details(
+	request: Request,
+	head_id: int,
+	session: Session = Depends(get_session),
+) -> HTMLResponse:
+	"""Render milling head details page."""
+	head = session.get(MillingHeads, head_id)
+	if not head:
+		return templates.TemplateResponse(
+			request,
+			"tools/milling_heads_list.html",
+			{"heads": [], "error": "Głowica nie znaleziona"},
+			status_code=404,
+		)
+	return templates.TemplateResponse(
+		request,
+		"tools/milling_heads_details.html",
+		{"head": head},
 	)
 
 
