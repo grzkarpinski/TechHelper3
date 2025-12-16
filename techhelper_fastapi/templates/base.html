@@ -8,7 +8,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css"
     />
-    <link rel="stylesheet" href="{{ url_for('static', path='styles.css') }}" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='styles.css') }}?v=20251216"
+    />
     <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   </head>
   <body class="app-body text-slate-900">
@@ -16,7 +19,6 @@
       <nav class="app-container app-nav">
         <a class="app-brand" href="{{ url_for('read_root') }}">
           <span>TechHelper</span>
-          <span class="app-pill">inżynieria CNC</span>
         </a>
         <ul class="app-nav-links">
           <li>

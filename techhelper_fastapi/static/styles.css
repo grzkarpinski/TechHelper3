@@ -82,12 +82,12 @@
 }
 
 .app-main {
-  padding: 2rem 0 2rem;
+  padding: 1.5rem 0 1.5rem;
   flex: 1;
 }
 
 .app-footer {
-  background: rgba(15, 23, 42, 0.84);
+  background: rgba(15, 23, 42, 1);
   color: rgba(241, 245, 249, 0.86);
   font-size: 0.78rem;
   padding: 1.4rem 0;
@@ -97,12 +97,12 @@
 .app-card {
   background: var(--app-surface);
   border: 1px solid var(--app-border);
-  border-radius: 12px;
+  border-radius: var(--app-radius);
   box-shadow: var(--app-shadow);
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
 }
 
 .app-field-hint {
