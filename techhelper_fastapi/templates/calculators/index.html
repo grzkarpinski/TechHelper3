@@ -4,20 +4,15 @@
   <header>
     <span class="app-section-eyebrow">Moduł obliczeń</span>
     <h1 class="app-section-title">Kalkulatory dla frezowania i wiercenia</h1>
-    <p class="app-section-lede">
-      Dobierz parametry skrawania lub oszacuj koszt operacji obróbczych.
-      Wszystkie kalkulatory reagują natychmiast dzięki HTMX, a wyniki są
-      prezentowane bez przeładowywania strony.
-    </p>
   </header>
-  <div class="grid gap-5 md:grid-cols-3">
+  <div class="grid gap-3 md:grid-cols-3">
     <a
       class="app-card group transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_speed_feed_form') }}"
     >
-      <div class="space-y-3">
+      <div class="space-y-2">
         <span class="app-pill">Frezowanie</span>
-        <h2 class="text-xl font-semibold text-slate-900">
+        <h2 class="text-lg font-semibold text-slate-900">
           Kalkulator prędkości i posuwu
         </h2>
         <p class="text-sm text-slate-600">
@@ -51,9 +46,9 @@
       class="app-card group transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_drilling_speed_feed_form') }}"
     >
-      <div class="space-y-3">
+      <div class="space-y-2">
         <span class="app-pill">Wiercenie</span>
-        <h2 class="text-xl font-semibold text-slate-900">
+        <h2 class="text-lg font-semibold text-slate-900">
           Kalkulator parametrów wiercenia
         </h2>
         <p class="text-sm text-slate-600">
@@ -87,9 +82,9 @@
       class="app-card group transition duration-150 hover:-translate-y-1 hover:shadow-xl"
       href="{{ url_for('calculators_cost_form') }}"
     >
-      <div class="space-y-3">
+      <div class="space-y-2">
         <span class="app-pill">Koszt obróbki</span>
-        <h2 class="text-xl font-semibold text-slate-900">
+        <h2 class="text-lg font-semibold text-slate-900">
           Kalkulator czasu i stawki
         </h2>
         <p class="text-sm text-slate-600">
