@@ -55,8 +55,9 @@ TechHelper{% endblock %} {% block content %}
         Oblicz koszt
       </button>
       <button
-        type="reset"
+        type="button"
         class="app-button app-button--ghost"
+        onclick="this.form.reset()"
         hx-get="{{ url_for('calculators_cost_result_empty') }}"
         hx-target="#cost-result"
         hx-swap="innerHTML"
@@ -72,16 +73,16 @@ TechHelper{% endblock %} {% block content %}
 </section>
 
 <template id="operation-row-template">
-  <div class="app-card app-card--subtle space-y-4" data-operation-row>
+  <div
+    class="app-card app-card--subtle space-y-4 cost-operation-row"
+    data-operation-row
+  >
     <div class="text-sm font-semibold text-slate-700" data-operation-title>
       Operacja
     </div>
-    <div class="app-form-grid">
+    <div class="app-form-grid app-form-grid--operation">
       <label class="app-field" for="machine_group-__INDEX__">
         <span>Grupa maszyny</span>
-        <span class="app-field-hint"
-          >Wybierz typ urządzenia i jego stawkę godzinową</span
-        >
         <select
           id="machine_group-__INDEX__"
           name="machine_group"
@@ -98,9 +99,6 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="tpz-__INDEX__">
         <span>Czas przygotowawczo-zakończeniowy Tpz (min)</span>
-        <span class="app-field-hint"
-          >Czas przygotowania maszyny przed faktycznym szlifowaniem</span
-        >
         <input
           id="tpz-__INDEX__"
           name="tpz"
@@ -113,9 +111,6 @@ TechHelper{% endblock %} {% block content %}
       </label>
       <label class="app-field" for="tj-__INDEX__">
         <span>Czas jednostkowy Tj (min)</span>
-        <span class="app-field-hint"
-          >Czas rzeczywistego szlifowania jednej części</span
-        >
         <input
           id="tj-__INDEX__"
           name="tj"

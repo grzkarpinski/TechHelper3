@@ -126,8 +126,9 @@ TechHelper{% endblock %} {% block content %}
         Oblicz parametry
       </button>
       <button
-        type="reset"
+        type="button"
         class="app-button app-button--ghost"
+        onclick="this.form.reset()"
         hx-get="{{ url_for('calculators_speed_feed_result_empty') }}"
         hx-target="#speed-feed-result"
         hx-swap="innerHTML"

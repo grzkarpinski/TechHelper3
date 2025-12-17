@@ -17,16 +17,16 @@ endif %} {% else %} — {% endif %} {%- endmacro %} {% if errors %}
       <strong>{{ display_value(result.cutting_speed) }}</strong>
     </div>
     <div class="app-stat-card">
+      <span>Posuw na ząb Fz (mm/z)</span>
+      <strong>{{ display_value(result.feed_per_tooth) }}</strong>
+    </div>
+    <div class="app-stat-card">
       <span>Obroty wrzeciona n (obr/min)</span>
       <strong>{{ display_value(result.spindle_speed) }}</strong>
     </div>
     <div class="app-stat-card">
       <span>Posuw F (mm/min)</span>
       <strong>{{ display_value(result.feed_rate) }}</strong>
-    </div>
-    <div class="app-stat-card">
-      <span>Posuw na ząb Fz (mm/z)</span>
-      <strong>{{ display_value(result.feed_per_tooth) }}</strong>
     </div>
   </dl>
 </div>

@@ -176,6 +176,31 @@
   .app-form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .app-form-grid.app-form-grid--operation {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    align-items: end;
+    max-width: 100%;
+    overflow: hidden;
+  }
+}
+
+.cost-operation-row .app-field {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.cost-operation-row .app-input,
+.cost-operation-row .app-select {
+  min-width: 0;
+  max-width: 80%;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+.cost-operation-row .app-select {
+  max-width: 100%;
 }
 
 .app-field {

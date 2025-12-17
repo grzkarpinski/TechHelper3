@@ -443,9 +443,22 @@ Zabezpieczenie bazy danych i kalkulatorów przed nieautoryzowanymi zmianami.
 - [ ] Walidacja danych we wszystkich formularzach
 - [ ] Bug fixing
 
+### Etap 7.5: 🔐 Basic Auth (1-2h)
+
+**⚠️ WYMAGANE przed deploymentem!**
+
+- [ ] Implementacja Basic Auth w FastAPI
+- [ ] Zabezpieczenie wszystkich endpointów (kalkulatory + bazy narzędzi)
+- [ ] Login/hasło w zmiennych środowiskowych (.env)
+- [ ] Middleware autoryzacji
+- [ ] Testy dostępu (z i bez autoryzacji)
+- [ ] Dokumentacja credentials dla Railway deployment
+
+**Cel:** Zabezpieczenie aplikacji przed nieautoryzowanym dostępem po wdrożeniu na Railway.
+
 ### Etap 8: 🌐 Deployment (2-3h)
 
-**⚠️ Dopiero po zakończeniu Etapu 7!**
+**⚠️ Dopiero po zakończeniu Etapu 7 i 7.5!**
 
 - [ ] Przygotowanie `requirements.txt`
 - [ ] Konfiguracja Railway
