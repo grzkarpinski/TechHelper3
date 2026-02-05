@@ -164,7 +164,7 @@ def test_update_milling_head_valid(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert response.status_code in [303, 404]
+	assert response.status_code == 303
 
 
 def test_update_milling_head_invalid(mock_session):
@@ -190,8 +190,8 @@ def test_update_milling_head_invalid(mock_session):
 			"liczba_ostrzy": 4,
 		},
 	)
-	# Due to test fixture limitations, this may return 404 instead of 400
-	assert response.status_code in [400, 404]
+	# With proper fixture isolation, validation errors return 400
+	assert response.status_code == 400
 
 
 # ============================================================================
@@ -217,8 +217,8 @@ def test_delete_milling_head(mock_session):
 		"/tools/milling-heads/1",
 		follow_redirects=False,
 	)
-	# Should redirect
-	assert response.status_code in [303, 404]
+	# Should redirect after successful delete
+	assert response.status_code == 303
 
 
 # ============================================================================
@@ -294,6 +294,34 @@ def test_filter_no_results(mock_session):
 	assert response.status_code == 200
 
 
+def test_filter_by_diameter_exact_match(mock_session):
+	"""Regression test: filter by diameter should return exact matches via OR logic."""
+	# Create heads with different diameters
+	client.post(
+		"/tools/milling-heads",
+		data={"średnica_D_mm": 10.0, "symbol_narzędzia": "HEAD-10", "liczba_ostrzy": 4},
+		follow_redirects=False,
+	)
+	client.post(
+		"/tools/milling-heads",
+		data={"średnica_D_mm": 20.0, "symbol_narzędzia": "HEAD-20", "liczba_ostrzy": 4},
+		follow_redirects=False,
+	)
+	client.post(
+		"/tools/milling-heads",
+		data={"średnica_D_mm": 30.0, "symbol_narzędzia": "HEAD-30", "liczba_ostrzy": 4},
+		follow_redirects=False,
+	)
+
+	# Search for diameter 10 - should find HEAD-10 via diameter OR "10" in symbol
+	response = client.get("/tools/milling-heads/filter", params={"search": "10"})
+	assert response.status_code == 200
+	assert b"HEAD-10" in response.content
+	# Should NOT contain 20 or 30 (diameter doesn't match, symbol doesn't contain "10")
+	assert b"HEAD-20" not in response.content
+	assert b"HEAD-30" not in response.content
+
+
 # ============================================================================
 # INTEGRATION TESTS
 # ============================================================================
@@ -328,14 +356,14 @@ def test_full_crud_workflow(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert update_resp.status_code in [303, 404]
+	assert update_resp.status_code == 303
 
 	# 4. Delete
 	delete_resp = client.delete(
 		"/tools/milling-heads/1",
 		follow_redirects=False,
 	)
-	assert delete_resp.status_code in [303, 404]
+	assert delete_resp.status_code == 303
 
 
 # ============================================================================
@@ -478,8 +506,8 @@ def test_update_milling_head_valid(mock_session):
 		},
 		follow_redirects=False,
 	)
-	# Should either succeed or fail gracefully (record might not exist in test)
-	assert response.status_code in [303, 404]
+	# Should succeed with proper fixture isolation
+	assert response.status_code == 303
 
 
 def test_update_milling_head_invalid(mock_session):
@@ -519,8 +547,8 @@ def test_delete_milling_head(mock_session):
 		"/tools/milling-heads/1",
 		follow_redirects=False,
 	)
-	# Should redirect even if record doesn't exist (graceful)
-	assert response.status_code in [303, 404]
+	# Should redirect after successful delete
+	assert response.status_code == 303
 
 
 # ============================================================================
@@ -615,14 +643,14 @@ def test_full_crud_workflow(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert update_resp.status_code in [303, 404]  # Graceful if not found
+	assert update_resp.status_code == 303
 
 	# 4. Delete
 	delete_resp = client.delete(
 		"/tools/milling-heads/1",
 		follow_redirects=False,
 	)
-	assert delete_resp.status_code in [303, 404]
+	assert delete_resp.status_code == 303
 
 
 # ============================================================================
@@ -844,7 +872,7 @@ def test_update_milling_cutter_valid(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert response.status_code in [303, 404]
+	assert response.status_code == 303
 
 
 def test_update_milling_cutter_invalid(mock_session):
@@ -870,8 +898,8 @@ def test_update_milling_cutter_invalid(mock_session):
 			"liczba_ostrzy": 4,
 		},
 	)
-	# Due to test fixture limitations, this may return 404 instead of 400
-	assert response.status_code in [400, 404]
+	# With proper fixture isolation, validation errors return 400
+	assert response.status_code == 400
 
 
 # DELETE TESTS - MILLING CUTTERS
@@ -893,7 +921,7 @@ def test_delete_milling_cutter(mock_session):
 		"/tools/milling-cutters/1",
 		follow_redirects=False,
 	)
-	assert response.status_code in [303, 404]
+	assert response.status_code == 303
 
 
 # DETAILS TESTS - MILLING CUTTERS
@@ -957,6 +985,28 @@ def test_filter_cutters_no_results(mock_session):
 	assert response.status_code == 200
 
 
+def test_filter_cutters_by_diameter_exact_match(mock_session):
+	"""Regression test: filter cutters by diameter should return exact matches via OR logic."""
+	# Create cutters with different diameters
+	client.post(
+		"/tools/milling-cutters",
+		data={"średnica_D_mm": 8.0, "symbol_narzędzia": "CUTTER-8", "liczba_ostrzy": 4},
+		follow_redirects=False,
+	)
+	client.post(
+		"/tools/milling-cutters",
+		data={"średnica_D_mm": 16.0, "symbol_narzędzia": "CUTTER-16", "liczba_ostrzy": 4},
+		follow_redirects=False,
+	)
+
+	# Search for diameter 8 - should find CUTTER-8
+	response = client.get("/tools/milling-cutters/filter", params={"search": "8"})
+	assert response.status_code == 200
+	assert b"CUTTER-8" in response.content
+	# CUTTER-16 might appear because "16" contains no "8", but diameter 16 != 8
+	assert b"CUTTER-16" not in response.content
+
+
 # INTEGRATION TESTS - MILLING CUTTERS
 def test_full_crud_workflow_cutters(mock_session):
 	"""Test a complete CRUD workflow for cutters: create, read, update, delete."""
@@ -987,14 +1037,14 @@ def test_full_crud_workflow_cutters(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert update_resp.status_code in [303, 404]
+	assert update_resp.status_code == 303
 
 	# 4. Delete
 	delete_resp = client.delete(
 		"/tools/milling-cutters/1",
 		follow_redirects=False,
 	)
-	assert delete_resp.status_code in [303, 404]
+	assert delete_resp.status_code == 303
 
 
 # EDGE CASES - MILLING CUTTERS
@@ -1213,7 +1263,7 @@ def test_update_drill_valid(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert response.status_code in [303, 404]
+	assert response.status_code == 303
 
 
 def test_update_drill_invalid(mock_session):
@@ -1239,8 +1289,8 @@ def test_update_drill_invalid(mock_session):
 			"rodzaj_wiertła": "HSS",
 		},
 	)
-	# Due to test fixture limitations, this may return 404 instead of 400
-	assert response.status_code in [400, 404]
+	# With proper fixture isolation, validation errors return 400
+	assert response.status_code == 400
 
 
 # DELETE TESTS - DRILLS
@@ -1262,7 +1312,7 @@ def test_delete_drill(mock_session):
 		"/tools/drills/1",
 		follow_redirects=False,
 	)
-	assert response.status_code in [303, 404]
+	assert response.status_code == 303
 
 
 # DETAILS TESTS - DRILLS
@@ -1317,6 +1367,49 @@ def test_filter_drills_no_results(mock_session):
 	assert response.status_code == 200
 
 
+def test_filter_drills_by_diameter_exact_match(mock_session):
+	"""Regression test: filter drills by diameter should return exact matches via OR logic."""
+	# Create drills with different diameters
+	client.post(
+		"/tools/drills",
+		data={"średnica_D_mm": 5.0, "symbol_narzędzia": "DRILL-5", "rodzaj_wiertła": "HSS"},
+		follow_redirects=False,
+	)
+	client.post(
+		"/tools/drills",
+		data={"średnica_D_mm": 12.0, "symbol_narzędzia": "DRILL-12", "rodzaj_wiertła": "VHM"},
+		follow_redirects=False,
+	)
+
+	# Search for diameter 5 - should find DRILL-5
+	response = client.get("/tools/drills/filter", params={"search": "5"})
+	assert response.status_code == 200
+	assert b"DRILL-5" in response.content
+	# DRILL-12 should not appear (diameter 12 != 5, symbol doesn't contain "5")
+	assert b"DRILL-12" not in response.content
+
+
+def test_filter_drills_by_rodzaj(mock_session):
+	"""Regression test: filter drills by drill type (rodzaj_wiertła)."""
+	# Create drills with different types
+	client.post(
+		"/tools/drills",
+		data={"średnica_D_mm": 6.0, "symbol_narzędzia": "DRILL-A", "rodzaj_wiertła": "HSS"},
+		follow_redirects=False,
+	)
+	client.post(
+		"/tools/drills",
+		data={"średnica_D_mm": 8.0, "symbol_narzędzia": "DRILL-B", "rodzaj_wiertła": "VHM"},
+		follow_redirects=False,
+	)
+
+	# Search for "HSS" - should find DRILL-A only
+	response = client.get("/tools/drills/filter", params={"search": "HSS"})
+	assert response.status_code == 200
+	assert b"DRILL-A" in response.content
+	assert b"DRILL-B" not in response.content
+
+
 # INTEGRATION TESTS - DRILLS
 def test_full_crud_workflow_drills(mock_session):
 	"""Test a complete CRUD workflow for drills: create, read, update, delete."""
@@ -1347,14 +1440,14 @@ def test_full_crud_workflow_drills(mock_session):
 		},
 		follow_redirects=False,
 	)
-	assert update_resp.status_code in [303, 404]
+	assert update_resp.status_code == 303
 
 	# 4. Delete
 	delete_resp = client.delete(
 		"/tools/drills/1",
 		follow_redirects=False,
 	)
-	assert delete_resp.status_code in [303, 404]
+	assert delete_resp.status_code == 303
 
 
 # EDGE CASES - DRILLS

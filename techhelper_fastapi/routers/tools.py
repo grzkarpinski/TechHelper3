@@ -14,6 +14,7 @@ from ..database import get_session
 from ..models.milling_heads import MillingHeads
 from ..models.milling_cutters import MillingCutters
 from ..models.drills import Drills
+from ..services.validation import parse_optional_float
 
 templates = Jinja2Templates(
 	directory=str(Path(__file__).resolve().parent.parent / "templates")
@@ -60,21 +61,20 @@ async def milling_heads_filter(
 
 	query = select(MillingHeads)
 
-	# If search term provided, filter across three fields
+	# If search term provided, filter across all supported fields using OR
 	if search.strip():
 		search_term = f"%{search.strip()}%"
-		query = query.where(
-			or_(
-				MillingHeads.symbol_narzędzia.ilike(search_term),
-				MillingHeads.producent.ilike(search_term),
-			)
-		)
-		# Try to parse as float for diameter search
+		conditions = [
+			MillingHeads.symbol_narzędzia.ilike(search_term),
+			MillingHeads.producent.ilike(search_term),
+		]
+		# Try to parse as float for diameter search (exact match)
 		try:
 			diameter_val = float(search.strip())
-			query = query.where(MillingHeads.średnica_D_mm == diameter_val)
+			conditions.append(MillingHeads.średnica_D_mm == diameter_val)
 		except ValueError:
 			pass
+		query = query.where(or_(*conditions))
 
 	# Sort by diameter ascending
 	query = query.order_by(MillingHeads.średnica_D_mm.asc())
@@ -170,68 +170,14 @@ async def milling_heads_create(
 	if liczba_ostrzy <= 0:
 		errors.append("Liczba ostrzy musi być większa od 0")
 
-	# Validate optional numeric fields
-	try:
-		posuw_na_ząb_min_val = (
-			float(posuw_na_ząb_min) if posuw_na_ząb_min.strip() else None
-		)
-		if posuw_na_ząb_min_val is not None and posuw_na_ząb_min_val < 0:
-			errors.append("Posuw na ząb (min) nie może być ujemny")
-	except ValueError:
-		errors.append("Posuw na ząb (min) musi być liczbą")
-
-	try:
-		posuw_na_ząb_max_val = (
-			float(posuw_na_ząb_max) if posuw_na_ząb_max.strip() else None
-		)
-		if posuw_na_ząb_max_val is not None and posuw_na_ząb_max_val < 0:
-			errors.append("Posuw na ząb (max) nie może być ujemny")
-	except ValueError:
-		errors.append("Posuw na ząb (max) musi być liczbą")
-
-	try:
-		prędkość_skrawania_min_val = (
-			float(prędkość_skrawania_min) if prędkość_skrawania_min.strip() else None
-		)
-		if prędkość_skrawania_min_val is not None and prędkość_skrawania_min_val < 0:
-			errors.append("Prędkość skrawania (min) nie może być ujemna")
-	except ValueError:
-		errors.append("Prędkość skrawania (min) musi być liczbą")
-
-	try:
-		prędkość_skrawania_max_val = (
-			float(prędkość_skrawania_max) if prędkość_skrawania_max.strip() else None
-		)
-		if prędkość_skrawania_max_val is not None and prędkość_skrawania_max_val < 0:
-			errors.append("Prędkość skrawania (max) nie może być ujemna")
-	except ValueError:
-		errors.append("Prędkość skrawania (max) musi być liczbą")
-
-	try:
-		obroty_val = float(obroty) if obroty.strip() else None
-		if obroty_val is not None and obroty_val < 0:
-			errors.append("Obroty nie mogą być ujemne")
-	except ValueError:
-		errors.append("Obroty muszą być liczbą")
-
-	try:
-		posuw_val = float(posuw) if posuw.strip() else None
-		if posuw_val is not None and posuw_val < 0:
-			errors.append("Posuw nie może być ujemny")
-	except ValueError:
-		errors.append("Posuw musi być liczbą")
-
-	try:
-		głębokość_skrawania_ap_val = (
-			float(głębokość_skrawania_ap) if głębokość_skrawania_ap.strip() else None
-		)
-		if (
-			głębokość_skrawania_ap_val is not None
-			and głębokość_skrawania_ap_val < 0
-		):
-			errors.append("Głębokość skrawania nie może być ujemna")
-	except ValueError:
-		errors.append("Głębokość skrawania musi być liczbą")
+	# Validate optional numeric fields using helper
+	posuw_na_ząb_min_val = parse_optional_float(posuw_na_ząb_min, "Posuw na ząb (min)", errors)
+	posuw_na_ząb_max_val = parse_optional_float(posuw_na_ząb_max, "Posuw na ząb (max)", errors)
+	prędkość_skrawania_min_val = parse_optional_float(prędkość_skrawania_min, "Prędkość skrawania (min)", errors)
+	prędkość_skrawania_max_val = parse_optional_float(prędkość_skrawania_max, "Prędkość skrawania (max)", errors)
+	obroty_val = parse_optional_float(obroty, "Obroty", errors)
+	posuw_val = parse_optional_float(posuw, "Posuw", errors)
+	głębokość_skrawania_ap_val = parse_optional_float(głębokość_skrawania_ap, "Głębokość skrawania", errors)
 
 	if errors:
 		return templates.TemplateResponse(
@@ -484,21 +430,20 @@ async def milling_cutters_filter(
 
 	query = select(MillingCutters)
 
-	# If search term provided, filter across three fields
+	# If search term provided, filter across all supported fields using OR
 	if search.strip():
 		search_term = f"%{search.strip()}%"
-		query = query.where(
-			or_(
-				MillingCutters.symbol_narzędzia.ilike(search_term),
-				MillingCutters.producent.ilike(search_term),
-			)
-		)
-		# Try to parse as float for diameter search
+		conditions = [
+			MillingCutters.symbol_narzędzia.ilike(search_term),
+			MillingCutters.producent.ilike(search_term),
+		]
+		# Try to parse as float for diameter search (exact match)
 		try:
 			diameter_val = float(search.strip())
-			query = query.where(MillingCutters.średnica_D_mm == diameter_val)
+			conditions.append(MillingCutters.średnica_D_mm == diameter_val)
 		except ValueError:
 			pass
+		query = query.where(or_(*conditions))
 
 	# Sort by diameter ascending
 	query = query.order_by(MillingCutters.średnica_D_mm.asc())
@@ -925,18 +870,26 @@ async def drills_filter(
 	search: str = "",
 	session: Session = Depends(get_session),
 ) -> str:
-	"""Filter drills by symbol, manufacturer, or diameter."""
+	"""Filter drills by symbol, manufacturer, diameter, or drill type."""
+	from sqlalchemy import or_
+
 	query = select(Drills)
 
-	if search:
-		from sqlalchemy import or_
-
-		query = query.where(
-			or_(
-				Drills.symbol_narzędzia.ilike(f"%{search}%"),
-				Drills.producent.ilike(f"%{search}%"),
-			)
-		)
+	# If search term provided, filter across all supported fields using OR
+	if search.strip():
+		search_term = f"%{search.strip()}%"
+		conditions = [
+			Drills.symbol_narzędzia.ilike(search_term),
+			Drills.producent.ilike(search_term),
+			Drills.rodzaj_wiertła.ilike(search_term),
+		]
+		# Try to parse as float for diameter search (exact match)
+		try:
+			diameter_val = float(search.strip())
+			conditions.append(Drills.średnica_D_mm == diameter_val)
+		except ValueError:
+			pass
+		query = query.where(or_(*conditions))
 
 	drills = session.exec(query.order_by(Drills.średnica_D_mm.asc())).all()
 	return templates.TemplateResponse(
